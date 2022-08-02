@@ -4,22 +4,18 @@
 
 Although this implementation is designed to be cross-platform, and will work on any machine, the associated scripts are designed to be run on a linux system.
 
-**Initial Setup**
-1. Open a new command prompt
-2. Execute the 'build' script with `./build.sh` to build the server and client
-
 **Running the Server**
 
 1. Open a new command prompt
-2. Change directory to the `RFC 913/Server` directory
-3. Execute the 'run' script with `./run.sh` to start the server
+2. Change directory to the `scripts` directory
+3. Execute the 'runServer' script with `./runServer.sh` to start the server
 4. A message will be displayed stating that the server was successfully started
 
 **Running the Client**
 
 1. Open a new command prompt
-2. Change directory to the `RFC 913/Client` directory
-3. Execute the 'run' script with `./run.sh` to start the client
+2. Change directory to the `scripts` directory
+3. Execute the 'runClient' script with `./runClient.sh` to start the client
 4. A message will be displayed stating that the client successfully connected to the server followed by a greeting from the server
 
 Once a client has connected to the server, commands can be sent and the server will respond accordingly.
@@ -48,8 +44,8 @@ user6|acct1 acct2 acct3 acct4|pass6
 
 1. Ensure the server is running
 2. Open a new command prompt
-3. Change directory to the `RFC 913/Client` directory
-4. Execute the 'test' script with `./test.sh` to start the test script
+3. Change directory to the `scripts` directory
+4. Execute the 'test' script with `./runTests.sh` to start the test script
 5. The client will execute the test cases shown below
 
 The output of the test script is shown below. Each command is tested thoroughly and has multiple test cases associated with it in order to ensure the command is working as intended. 
