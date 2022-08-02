@@ -1,0 +1,8 @@
+User-id|Account|Password
+:---:|:---:|:---:
+user1| | 
+user2|acct1| 
+user3| |pass3
+user4|acct1|pass4
+user5|acct1 acct2 acct3|pass5
+user6|acct1 acct2 acct3 acct4|pass6

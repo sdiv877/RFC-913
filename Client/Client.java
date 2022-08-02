@@ -1,30 +1,20 @@
-/**
- * Code is taken from Computer Networking: A Top-Down Approach Featuring
- * the Internet, second edition, copyright 1996-2002 J.F Kurose and K.W. Ross,
- * All Rights Reserved.
- **/
-
 import java.io.*;
 import java.net.*;
 
-class TCPClient {
+class Client {
     private static final int PORT = 6789;
 
     public static void main(String argv[]) throws Exception {
         String sentence;
         String modifiedSentence;
 
-        BufferedReader inFromUser =
-	    new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
 
         Socket clientSocket = new Socket("localhost", PORT);
 
-        DataOutputStream outToServer =
-	    new DataOutputStream(clientSocket.getOutputStream());
+        DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
 
-	BufferedReader inFromServer =
-	    new BufferedReader(new
-		InputStreamReader(clientSocket.getInputStream()));
+        BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
         sentence = inFromUser.readLine();
 
@@ -37,4 +27,3 @@ class TCPClient {
         clientSocket.close();
     }
 }
-

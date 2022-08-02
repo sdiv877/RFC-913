@@ -1,4 +1,2 @@
 #!/bin/sh
-javac *.java
-java TCPServer
-
+java Server

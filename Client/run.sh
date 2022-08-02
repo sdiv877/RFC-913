@@ -1,4 +1,2 @@
 #!/bin/sh
-javac *.java
-java TCPClient
-
+java Client

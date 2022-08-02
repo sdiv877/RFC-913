@@ -4,14 +4,18 @@
 
 Although this implementation is designed to be cross-platform, and will work on any machine, the associated scripts are designed to be run on a linux system.
 
-**Server Setup**
+**Initial Setup**
+1. Open a new command prompt
+2. Execute the 'build' script with `./build.sh` to build the server and client
+
+**Running the Server**
 
 1. Open a new command prompt
 2. Change directory to the `RFC 913/Server` directory
 3. Execute the 'run' script with `./run.sh` to start the server
 4. A message will be displayed stating that the server was successfully started
 
-**Client Setup**
+**Running the Client**
 
 1. Open a new command prompt
 2. Change directory to the `RFC 913/Client` directory
@@ -51,6 +55,8 @@ user6|acct1 acct2 acct3 acct4|pass6
 The output of the test script is shown below. Each command is tested thoroughly and has multiple test cases associated with it in order to ensure the command is working as intended. 
 
 ~~~
+RUNNING CLIENT TESTS
+
 1. User-id valid
 Successfully connected to localhost on port 6789
 +RFC 913 SFTP Server
