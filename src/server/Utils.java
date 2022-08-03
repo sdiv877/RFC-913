@@ -2,7 +2,7 @@ package server;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.Files;
@@ -38,12 +38,18 @@ public final class Utils {
             String[] cols = row.split("\\|");
             // get individual values from each column in row
             String userId = cols[USER_ID_COL];
-            List<String> accounts = Arrays.asList(cols[ACCOUNT_COL].split(" "));
-            List<String> passwords = Arrays.asList(cols[PASSWORD_COL].split(" "));
+            List<String> accounts = splitString(cols[ACCOUNT_COL], "\\s+");
+            List<String> passwords = splitString(cols[PASSWORD_COL], "\\s+");;
             // create new user based on values
             User user = new User(userId, accounts, passwords);
             users.add(user);
         }
         return users;
+    }
+
+    public static ArrayList<String> splitString(String s, String regex) {
+        ArrayList<String> splitUpString = new ArrayList<String>();
+        Collections.addAll(splitUpString, s.split(regex));
+        return splitUpString;
     }
 }

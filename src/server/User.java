@@ -13,6 +13,18 @@ public class User {
         this.passwords = passwords;
     }
 
+    public String getId() {
+        return this.id;
+    }
+
+    public List<String> getAccounts() {
+        return this.accounts;
+    }
+
+    public List<String> getPasswords() {
+        return this.passwords;
+    }
+
     public String toString() {
         return "{ Id: " + this.id + ", Accounts: " + this.accounts + ", Passwords: " + this.passwords + " }";
     }
