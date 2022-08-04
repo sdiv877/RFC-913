@@ -17,6 +17,14 @@ public final class Utils {
         throw new IllegalAccessError("server.Utils cannot be instantiated");
     }
 
+    public static void logMessage(String msg) {
+        System.out.println(msg);
+    }
+
+    public static String makeResponse(String msg, ResponseCode responseCode) {
+        return responseCode.toString() + msg + "\n";
+    }
+
     public static List<User> readUserDb() {
         List<String> userData = new ArrayList<String>();
         List<User> users = new ArrayList<User>();
@@ -39,7 +47,7 @@ public final class Utils {
             // get individual values from each column in row
             String userId = cols[USER_ID_COL];
             List<String> accounts = splitString(cols[ACCOUNT_COL], "\\s+");
-            List<String> passwords = splitString(cols[PASSWORD_COL], "\\s+");;
+            List<String> passwords = splitString(cols[PASSWORD_COL], "\\s+");
             // create new user based on values
             User user = new User(userId, accounts, passwords);
             users.add(user);

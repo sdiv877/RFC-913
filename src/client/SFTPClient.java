@@ -9,7 +9,6 @@ public class SFTPClient {
     private static final String HOSTNAME = "localhost";
     private static final int PORT = 6789;
 
-    private boolean isConnected;
     private Socket clientSocket;
     private BufferedReader inFromUser;
     private BufferedReader inFromServer;
@@ -21,7 +20,7 @@ public class SFTPClient {
         // Open stream from user's keyboard to client
         inFromUser = new BufferedReader(new InputStreamReader(System.in));
         // Attempt to connect to server
-        isConnected = connectToServer();
+        connectToServer();
     }
 
     public static void main(String argv[]) {
@@ -30,9 +29,11 @@ public class SFTPClient {
     }
 
     public void run() {
-        while (isConnected) {
+        while (!isClosed()) {
             String cmd = readUserInput();
-            evalCommand(cmd);
+            if (!isClosed()) {
+                evalCommand(cmd);
+            }
         }
     }
 
@@ -42,28 +43,30 @@ public class SFTPClient {
         logMessage(commandRes);
 
         if (cmd.equals("done")) {
-            this.closeConnection();
+            closeConnection();
         }
     }
-    
+
     public void closeConnection() {
         try {
-            // TODO: Close on server side as well
-            isConnected = false;
+            clientSocket.close();
             inFromUser.close();
             inFromServer.close();
             outToServer.close();
-            clientSocket.close();
         } catch (Exception e) {
             logMessage("Could not close connection to " + HOSTNAME + ":" + PORT);
         }
     }
-    
+
+    public boolean isClosed() {
+        return clientSocket.isClosed();
+    }
+
     public List<String> getServerResHistory() {
         return serverResHistory;
     }
 
-    private boolean connectToServer() {
+    private void connectToServer() {
         try {
             // Attempt to connect to server
             clientSocket = new Socket(HOSTNAME, PORT);
@@ -75,12 +78,10 @@ public class SFTPClient {
             logMessage(welcomeMessage);
             // Create stream to send input to server
             outToServer = new DataOutputStream(clientSocket.getOutputStream());
-            return true;
         } catch (Exception e) {
             logMessage("Could not connect to " + HOSTNAME + " on port " + PORT);
             e.printStackTrace();
-            System.exit(0);
-            return false;
+            closeConnection();
         }
     }
 
@@ -91,7 +92,7 @@ public class SFTPClient {
         } catch (Exception e) {
             logMessage("Could not read user input");
             e.printStackTrace();
-            System.exit(0);
+            closeConnection();
         }
         return "";
     }

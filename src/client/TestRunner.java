@@ -25,7 +25,7 @@ final class TestRunner {
         SFTPClient sftpClient = new SFTPClient();
         boolean succesful = false;
         TestOutcome testOutcome;
-        
+
         succesful = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
         succesful = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
 
