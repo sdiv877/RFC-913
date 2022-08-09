@@ -17,9 +17,8 @@ public class SFTPClient {
 
     public SFTPClient() {
         serverResHistory = new ArrayList<String>();
-        // Open stream from user's keyboard to client
-        inFromUser = new BufferedReader(new InputStreamReader(System.in));
-        // Attempt to connect to server
+        // Attempt to connect to user keyboard stream/server
+        connectToKeyboardStream();
         connectToServer();
     }
 
@@ -30,31 +29,23 @@ public class SFTPClient {
 
     public void run() {
         while (!isClosed()) {
-            String cmd = readUserInput();
-            if (!isClosed()) {
+            try {
+                String cmd = readUserInput();
                 evalCommand(cmd);
+            } catch (Exception e) {
+                // e.printStackTrace();
+                closeConnection();
             }
         }
     }
 
-    public void evalCommand(String cmd) {
-        sendToServer(cmd + "\n");
+    public void evalCommand(String cmd) throws Exception {
+        writeToServer(cmd + "\n");
         String commandRes = readFromServer();
         logMessage(commandRes);
 
         if (cmd.equals("done")) {
             closeConnection();
-        }
-    }
-
-    public void closeConnection() {
-        try {
-            clientSocket.close();
-            inFromUser.close();
-            inFromServer.close();
-            outToServer.close();
-        } catch (Exception e) {
-            logMessage("Could not close connection to " + HOSTNAME + ":" + PORT);
         }
     }
 
@@ -73,47 +64,61 @@ public class SFTPClient {
             logMessage("Successfully connected to " + HOSTNAME + " on port " + PORT);
             // Open the stream that the server is sending to the client
             inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            // Create stream to send input to server
+            outToServer = new DataOutputStream(clientSocket.getOutputStream());
             // Get and print server welcome message
             String welcomeMessage = readFromServer();
             logMessage(welcomeMessage);
-            // Create stream to send input to server
-            outToServer = new DataOutputStream(clientSocket.getOutputStream());
         } catch (Exception e) {
-            logMessage("Could not connect to " + HOSTNAME + " on port " + PORT);
+            logMessage("Could not connect to " + HOSTNAME + ":" + PORT);
             e.printStackTrace();
             closeConnection();
         }
     }
+    
+    private void connectToKeyboardStream() {
+        inFromUser = new BufferedReader(new InputStreamReader(System.in));
+    }
 
-    private String readUserInput() {
+    private void closeConnection() {
+        try {
+            clientSocket.close();
+            // inFromUser.close();
+            inFromServer.close();
+            outToServer.close();
+        } catch (Exception e) {
+            logMessage("Could not close connection to " + HOSTNAME + ":" + PORT + " gracefully");
+        }
+    }
+
+    private String readUserInput() throws Exception {
         try {
             System.out.print("> ");
             return inFromUser.readLine();
         } catch (Exception e) {
-            logMessage("Could not read user input");
-            e.printStackTrace();
-            closeConnection();
+            logMessage("Could not read user keyboard input");
+            throw e;
         }
-        return "";
     }
 
-    private void sendToServer(String s) {
+    private String readFromServer() throws Exception {
+        try {
+            String serverRes = inFromServer.readLine();
+            if (serverRes == null) throw new NullPointerException();
+            return serverRes;
+        } catch (Exception e) {
+            logMessage("Could not read server response from " + HOSTNAME + ":" + PORT);
+            throw e;
+        }
+    }
+
+    private void writeToServer(String s) throws Exception {
         try {
             outToServer.writeBytes(s);
         } catch (Exception e) {
-            logMessage("Could not write " + s + "to " + HOSTNAME + ":" + PORT);
-            e.printStackTrace();
+            logMessage("Could not write to server " + HOSTNAME + ":" + PORT);
+            throw e;
         }
-    }
-
-    private String readFromServer() {
-        try {
-            return inFromServer.readLine();
-        } catch (Exception e) {
-            logMessage("Could not read server response from " + HOSTNAME + ":" + PORT);
-            e.printStackTrace();
-        }
-        return "";
     }
 
     private void logMessage(String msg) {

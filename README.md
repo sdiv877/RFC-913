@@ -51,7 +51,7 @@ user6|acct1 acct2 acct3 acct4|pass6
 The output of the test script is shown below. Each command is tested thoroughly and has multiple test cases associated with it in order to ensure the command is working as intended. 
 
 ~~~
-RUNNING CLIENT TESTS
+| RUNNING CLIENT TESTS |
 
 1. User-id valid
 Successfully connected to localhost on port 6789
@@ -679,4 +679,7 @@ ERROR: Invalid Command
 Available Commands: "USER", "ACCT", "PASS", "TYPE", "LIST", "CDIR", "KILL", "NAME", "TOBE", "DONE", "RETR", "SEND", "STOP", "STOR", "SIZE"
 > done
 +Closing connection
+
+| ClIENT TESTS COMPLETED |
+PASSED: 53/53 tests.
 ~~~

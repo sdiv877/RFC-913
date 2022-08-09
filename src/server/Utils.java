@@ -47,9 +47,9 @@ public final class Utils {
             // get individual values from each column in row
             String userId = cols[USER_ID_COL];
             List<String> accounts = splitString(cols[ACCOUNT_COL], "\\s+");
-            List<String> passwords = splitString(cols[PASSWORD_COL], "\\s+");
+            String password = cols[PASSWORD_COL].equals(" ") ? null : cols[PASSWORD_COL];
             // create new user based on values
-            User user = new User(userId, accounts, passwords);
+            User user = new User(userId, accounts, password);
             users.add(user);
         }
         return users;
