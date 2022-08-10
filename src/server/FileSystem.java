@@ -8,17 +8,17 @@ import java.nio.file.Files;
 
 import utils.Utils;
 
-public final class Database {
+public final class FileSystem {
     private static final String USER_DB = "resources/users.txt";
     private static final int USER_ID_COL = 0;
     private static final int ACCOUNT_COL = 1;
     private static final int PASSWORD_COL = 2;
 
-    private Database() {
+    private FileSystem() {
         throw new IllegalAccessError("server.Utils cannot be instantiated");
     }
 
-    public static List<User> readUserDb() {
+    public static List<User> readUsers() {
         List<String> userData = new ArrayList<String>();
         List<User> users = new ArrayList<User>();
 
@@ -46,5 +46,20 @@ public final class Database {
             users.add(user);
         }
         return users;
+    }
+
+    public static String readDir(String path) {
+        Path dir = Paths.get(path);
+        String[] files = dir.toFile().list();
+        
+        StringBuilder allFiles = new StringBuilder();
+        for (int i = 0; i < files.length; i++) {
+            allFiles.append(files[i]);
+            if (i < (files.length - 1)) {
+                allFiles.append("\n");
+            }
+        }
+        
+        return allFiles.toString();
     }
 }

@@ -23,7 +23,7 @@ public class SFTPServer {
 	}
 
 	public SFTPServer() {
-		users = Database.readUserDb();
+		users = FileSystem.readUsers();
 		start();
 	}
 
@@ -208,6 +208,15 @@ public class SFTPServer {
 							return makeResponse("Using Continuous mode", ResponseCode.Success);
 						default:
 							return makeResponse("Type not valid", ResponseCode.Error);
+					}
+				case "list":
+					switch (commandArgs.get(0)) {
+						case "f":
+							return makeResponse(selectedUser.getId() + "/\n" + FileSystem.readDir("resources/home/user1"), ResponseCode.Success);
+						case "v":
+							return "v\0";
+						default:
+							return makeResponse("Argument error", ResponseCode.Error);
 					}
 				case "done":
 					return makeResponse("Closing connection", ResponseCode.Success);

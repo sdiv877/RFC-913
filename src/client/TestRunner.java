@@ -1,6 +1,7 @@
 package client;
 
 import java.util.List;
+import java.util.Arrays;
 import java.util.ArrayList;
 
 import utils.Utils;
@@ -27,6 +28,7 @@ final class TestRunner {
         testResults.add(test_Password_argument_error());
         testResults.add(test_Type());
         testResults.add(test_Type_argument_error());
+        testResults.add(test_List_standard_current_directory());
 
         System.out.println("| CLIENT TESTS COMPLETED |");
         printTestResults();
@@ -39,6 +41,16 @@ final class TestRunner {
 
     private static boolean assertStartsWith(String expected, String actual) {
         return actual.startsWith(expected);
+    }
+
+    private static boolean assertContainsAll(List<String> expected, String actual) {
+        for (String expect : expected) {
+            if (!actual.contains(expect)) {
+                System.out.println("COULDN'T FIND: " + expect);
+                return false;
+            }
+        }
+        return true;
     }
 
     private static void printTestResults() {
@@ -85,7 +97,7 @@ final class TestRunner {
             testOutcome = TestOutcome.Exception;
         }
 
-        System.out.println("");
+        System.out.println();
         return testOutcome;
     }
 
@@ -111,7 +123,7 @@ final class TestRunner {
             testOutcome = TestOutcome.Exception;
         }
 
-        System.out.println("");
+        System.out.println();
         return testOutcome;
     }
 
@@ -137,7 +149,7 @@ final class TestRunner {
             testOutcome = TestOutcome.Exception;
         }
 
-        System.out.println("");
+        System.out.println();
         return testOutcome;
     }
 
@@ -165,7 +177,7 @@ final class TestRunner {
             testOutcome = TestOutcome.Exception;
         }
 
-        System.out.println("");
+        System.out.println();
         return testOutcome;
     }
 
@@ -197,7 +209,7 @@ final class TestRunner {
             testOutcome = TestOutcome.Exception;
         }
 
-        System.out.println("");
+        System.out.println();
         return testOutcome;
     }
 
@@ -221,7 +233,7 @@ final class TestRunner {
             testOutcome = TestOutcome.Exception;
         }
 
-        System.out.println("");
+        System.out.println();
         return testOutcome;
     }
 
@@ -247,7 +259,7 @@ final class TestRunner {
             testOutcome = TestOutcome.Exception;
         }
 
-        System.out.println("");
+        System.out.println();
         return testOutcome;
     }
 
@@ -273,7 +285,7 @@ final class TestRunner {
             testOutcome = TestOutcome.Exception;
         }
 
-        System.out.println("");
+        System.out.println();
         return testOutcome;
     }
 
@@ -297,7 +309,7 @@ final class TestRunner {
             testOutcome = TestOutcome.Exception;
         }
 
-        System.out.println("");
+        System.out.println();
         return testOutcome;
     }
 
@@ -323,7 +335,7 @@ final class TestRunner {
             testOutcome = TestOutcome.Exception;
         }
 
-        System.out.println("");
+        System.out.println();
         return testOutcome;
     }
 
@@ -349,7 +361,7 @@ final class TestRunner {
             testOutcome = TestOutcome.Exception;
         }
 
-        System.out.println("");
+        System.out.println();
         return testOutcome;
     }
 
@@ -379,7 +391,7 @@ final class TestRunner {
             testOutcome = TestOutcome.Exception;
         }
 
-        System.out.println("");
+        System.out.println();
         return testOutcome;
     }
 
@@ -407,7 +419,35 @@ final class TestRunner {
             testOutcome = TestOutcome.Exception;
         }
 
-        System.out.println("");
+        System.out.println();
+        return testOutcome;
+    }
+
+    private static TestOutcome test_List_standard_current_directory() {
+        System.out.println("14. List standard, current directory");
+        SFTPClient sftpClient = new SFTPClient();
+        List<String> expectedFiles = Arrays.asList("+user1/", "file2.txt", "file.txt", "file3.txt", "file1.txt", "temp", "file4.txt", 
+            ".DS_Store", "data2.jpg", "data.jpg", "folder1", "license.txt");
+        boolean r1, r2, r3, r4, r5;
+        TestOutcome testOutcome;
+
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        try {
+            evalClientCommand(sftpClient, "user user1");
+            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            evalClientCommand(sftpClient, "list f");
+            r4 =  assertContainsAll(expectedFiles, sftpClient.getServerResHistory().get(3));
+            evalClientCommand(sftpClient, "done");
+            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
+        } catch (Exception e) {
+            System.out.println("| Test failed with exception |");
+            e.printStackTrace();
+            testOutcome = TestOutcome.Exception;
+        }
+
+        System.out.println();
         return testOutcome;
     }
 }
