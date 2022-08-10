@@ -43,7 +43,7 @@ public class SFTPServer {
 			}
 		}
 	}
-
+	
 	private void start() {
 		try {
 			welcomeSocket = new ServerSocket(PORT);
@@ -55,7 +55,24 @@ public class SFTPServer {
 			System.exit(0);
 		}
 	}
+	
+	private String validateArgs(String commandName, List<String> commandArgs) {
+        if (commandArgs.size() <= 1) return null;
 
+        switch (commandName) {
+			case "user":
+			return "ERROR: Invalid Arguments\nUsage: USER user-id";
+            case "acct":
+                return "ERROR: Invalid Arguments\nUsage: ACCT account";
+				case "pass":
+                return "ERROR: Invalid Arguments\nUsage: PASS password";
+            case "type":
+			return "ERROR: Invalid Arguments\nUsage: TYPE { A | B | C }";
+            default:
+                return null;
+        }
+    }
+	
 	private User getUser(String userId) {
 		for (User user : users) {
 			if (user.getId().equals(userId)) {
@@ -65,13 +82,13 @@ public class SFTPServer {
 		return null;
 	}
 
-	private static void logMessage(String msg) {
-        System.out.println(msg);
+    private static String makeResponse(String msg, ResponseCode responseCode) {
+		return responseCode.toString() + msg + '\0';
     }
 
-    private static String makeResponse(String msg, ResponseCode responseCode) {
-        return responseCode.toString() + msg + "\n";
-    }
+	private static void logMessage(String msg) {
+		System.out.println(msg);
+	}
 
 	private class SFTPClientWorker implements Runnable {
 		private int id;
@@ -138,6 +155,11 @@ public class SFTPServer {
 		private String callCommand(String commandCall) {
 			ArrayList<String> commandArgs = Utils.splitString(commandCall, "\\s+");
 			String commandName = commandArgs.remove(0); // first value in call is just the command name
+
+			String argValidityMessage = validateArgs(commandName, commandArgs);
+			if (argValidityMessage != null) {
+				return makeResponse(argValidityMessage, ResponseCode.None);
+			}
 
 			switch (commandName) {
 				case "user":

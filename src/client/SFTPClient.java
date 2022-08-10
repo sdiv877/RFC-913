@@ -5,15 +5,13 @@ import java.net.*;
 import java.util.List;
 import java.util.ArrayList;
 
-import utils.Utils;
-
 public class SFTPClient {
     private static final String HOSTNAME = "localhost";
     private static final int PORT = 6789;
 
     private Socket clientSocket;
     private BufferedReader inFromUser;
-    private BufferedReader inFromServer;
+    private DataInputStream inFromServer;
     private DataOutputStream outToServer;
     private List<String> serverResHistory;
 
@@ -42,11 +40,9 @@ public class SFTPClient {
     }
 
     public void evalCommand(String cmd) throws Exception {
-        boolean writeWasSuccessful = writeToServer(cmd + "\n");
-        if (writeWasSuccessful) {
-            String commandRes = readFromServer();
-            logMessage(commandRes);
-        }
+        writeToServer(cmd + "\n");
+        String commandRes = readFromServer();
+        logMessage(commandRes);
 
         if (cmd.equals("done")) {
             closeConnection();
@@ -67,7 +63,7 @@ public class SFTPClient {
             clientSocket = new Socket(HOSTNAME, PORT);
             logMessage("Successfully connected to " + HOSTNAME + " on port " + PORT);
             // Open the stream that the server is sending to the client
-            inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            inFromServer = new DataInputStream(clientSocket.getInputStream());
             // Create stream to send input to server
             outToServer = new DataOutputStream(clientSocket.getOutputStream());
             // Get and print server welcome message
@@ -107,47 +103,25 @@ public class SFTPClient {
 
     private String readFromServer() throws Exception {
         try {
-            String serverRes = inFromServer.readLine();
-            if (serverRes == null) throw new NullPointerException();
-            return serverRes;
+            StringBuilder serverRes = new StringBuilder();
+            char c = (char)inFromServer.read();
+            while (c != '\0') {
+                serverRes.append(c);
+                c = (char)inFromServer.read();
+            }
+            return serverRes.toString();
         } catch (Exception e) {
             logMessage("Could not read server response from " + HOSTNAME + ":" + PORT);
             throw e;
         }
     }
 
-    private boolean writeToServer(String cmd) throws Exception {
-        String argValidityMsg = validateArgs(cmd);
-        if (argValidityMsg != null) {
-            logMessage(argValidityMsg);
-            return false;
-        }
+    private void writeToServer(String cmd) throws Exception {
         try {
             outToServer.writeBytes(cmd);
-            return true;
         } catch (Exception e) {
             logMessage("Could not write to server " + HOSTNAME + ":" + PORT);
             throw e;
-        }
-    }
-
-    private String validateArgs(String cmd) {
-        List<String> commandArgs = Utils.splitString(cmd, "\\s+");
-        String commandName = commandArgs.remove(0); // first value in call is just the command name
-
-        if (commandArgs.size() <= 1)
-            return null;
-        switch (commandName) {
-            case "user":
-                return "ERROR: Invalid Arguments\nUsage: USER user-id";
-            case "acct":
-                return "ERROR: Invalid Arguments\nUsage: ACCT account";
-            case "pass":
-                return "ERROR: Invalid Arguments\nUsage: PASS password";
-            case "type":
-                return "ERROR: Invalid Arguments\nUsage: TYPE { A | B | C }";
-            default:
-                return null;
         }
     }
 
