@@ -217,24 +217,41 @@ public class SFTPServer {
 							return makeResponse("Type not valid", ResponseCode.Error);
 					}
 				case "list":
-					String selectedDir = currentDir;
+					String selectedListDir = currentDir;
 					if (commandArgs.size() > 1) {
-						selectedDir += commandArgs.get(1);
+						selectedListDir += commandArgs.get(1);
 					}
-					if (!FileSystem.dirExists(selectedDir)) {
-						return makeResponse("Cant list directory because: " + selectedDir + " does not exist", ResponseCode.Error);
-					}
-					if (FileSystem.pathIsFile(selectedDir)) {
-						return makeResponse("Cant list directory because: " + selectedDir + " is not a directory", ResponseCode.Error); 
+					if (!FileSystem.dirExists(selectedListDir)) {
+						return makeResponse("Cant list directory because: " + selectedListDir + " does not exist", ResponseCode.Error);
+					} else if (FileSystem.pathIsFile(selectedListDir)) {
+						return makeResponse("Cant list directory because: " + selectedListDir + " is not a directory", ResponseCode.Error); 
 					}
 					switch (commandArgs.get(0)) {
 						case "f":
-							return makeResponse(FileSystem.readDir(selectedDir), ResponseCode.Success);
+							return makeResponse(FileSystem.readDir(selectedListDir), ResponseCode.Success);
 						case "v":
-							return makeResponse(FileSystem.readDirVerbose(selectedDir), ResponseCode.Success);
+							return makeResponse(FileSystem.readDirVerbose(selectedListDir), ResponseCode.Success);
 						default:
 							return makeResponse("Argument error", ResponseCode.Error);
 					}
+				case "cdir":
+					String selectedCDir;
+					if (commandArgs.get(0).equals("/")) {
+						selectedCDir = selectedUser.getRootDir();
+					} else if (commandArgs.get(0).startsWith("/")) {
+						// user.getId() represents user.getRootDir() without the ending "/"
+						selectedCDir = selectedUser.getId() + commandArgs.get(0);
+					} else {
+						selectedCDir = Utils.appendIfMissing(currentDir, "/");
+						selectedCDir += commandArgs.get(0);
+					}
+					if (!FileSystem.dirExists(selectedCDir)) {
+						return makeResponse("Cant connect to directory because: " + selectedCDir  + " does not exist", ResponseCode.Error);
+					} else if (FileSystem.pathIsFile(selectedCDir)) {
+						return makeResponse("Cant list directory because: " + selectedCDir  + " is not a directory", ResponseCode.Error);
+					}
+					currentDir = selectedCDir;
+					return makeResponse("Changed working dir to " + currentDir, ResponseCode.LoggedIn);
 				case "done":
 					return makeResponse("Closing connection", ResponseCode.Success);
 				default:

@@ -1,9 +1,10 @@
-package client;
+package test;
 
 import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
 
+import client.SFTPClient;
 import utils.Utils;
 
 final class TestRunner {
@@ -35,6 +36,11 @@ final class TestRunner {
         testResults.add(test_List_non_existent_directory());
         testResults.add(test_List_file_instead_of_directory());
         testResults.add(test_List_argument_error());
+        testResults.add(test_Change_directory_relative_path());
+        testResults.add(test_Change_directory_user_path());
+        testResults.add(test_Change_directory_absolute_path());
+        testResults.add(test_Change_directory_non_existent_directory());
+        testResults.add(test_Change_directory_file_instead_of_directory());
 
         System.out.println("| CLIENT TESTS COMPLETED |");
         printTestResults();
@@ -72,8 +78,8 @@ final class TestRunner {
                     break;
             }
         }
+        System.out.println("Test 16 requires manual verification.");
         System.out.println("PASSED: " + successCount + "/" + testResults.size() + " tests.");
-        System.out.println("Please verify Test 16 manually.");
     }
 
     private static void evalClientCommand(SFTPClient sftpClient, String cmd) throws Exception {
@@ -96,7 +102,6 @@ final class TestRunner {
             r4 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(3));
             testOutcome = (r1 && r2 && r3 && r4) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
-            System.out.println("| Test failed with exception |");
             e.printStackTrace();
             testOutcome = TestOutcome.Exception;
         }
@@ -122,7 +127,6 @@ final class TestRunner {
             r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
-            System.out.println("| Test failed with exception |");
             e.printStackTrace();
             testOutcome = TestOutcome.Exception;
         }
@@ -148,7 +152,6 @@ final class TestRunner {
             r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
-            System.out.println("| Test failed with exception |");
             e.printStackTrace();
             testOutcome = TestOutcome.Exception;
         }
@@ -176,7 +179,6 @@ final class TestRunner {
             r6 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(5));
             testOutcome = (r1 && r2 && r3 && r4 && r5 && r6) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
-            System.out.println("| Test failed with exception |");
             e.printStackTrace();
             testOutcome = TestOutcome.Exception;
         }
@@ -208,7 +210,6 @@ final class TestRunner {
             r8 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(7));
             testOutcome = (r1 && r2 && r3 && r4 && r5 && r6 && r7 && r8) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
-            System.out.println("| Test failed with exception |");
             e.printStackTrace();
             testOutcome = TestOutcome.Exception;
         }
@@ -232,7 +233,6 @@ final class TestRunner {
             r4 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(3));
             testOutcome = (r1 && r2 && r3 && r4) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
-            System.out.println("| Test failed with exception |");
             e.printStackTrace();
             testOutcome = TestOutcome.Exception;
         }
@@ -258,7 +258,6 @@ final class TestRunner {
             r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
-            System.out.println("| Test failed with exception |");
             e.printStackTrace();
             testOutcome = TestOutcome.Exception;
         }
@@ -284,7 +283,6 @@ final class TestRunner {
             r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
-            System.out.println("| Test failed with exception |");
             e.printStackTrace();
             testOutcome = TestOutcome.Exception;
         }
@@ -308,7 +306,6 @@ final class TestRunner {
             r4 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(3));
             testOutcome = (r1 && r2 && r3 && r4) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
-            System.out.println("| Test failed with exception |");
             e.printStackTrace();
             testOutcome = TestOutcome.Exception;
         }
@@ -334,7 +331,6 @@ final class TestRunner {
             r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
-            System.out.println("| Test failed with exception |");
             e.printStackTrace();
             testOutcome = TestOutcome.Exception;
         }
@@ -360,7 +356,6 @@ final class TestRunner {
             r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
-            System.out.println("| Test failed with exception |");
             e.printStackTrace();
             testOutcome = TestOutcome.Exception;
         }
@@ -390,7 +385,6 @@ final class TestRunner {
             r7 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(6));
             testOutcome = (r1 && r2 && r3 && r4 && r5 && r6 && r7) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
-            System.out.println("| Test failed with exception |");
             e.printStackTrace();
             testOutcome = TestOutcome.Exception;
         }
@@ -418,7 +412,6 @@ final class TestRunner {
             r6 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(5));
             testOutcome = (r1 && r2 && r3 && r4 && r5 && r6) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
-            System.out.println("| Test failed with exception |");
             e.printStackTrace();
             testOutcome = TestOutcome.Exception;
         }
@@ -446,7 +439,6 @@ final class TestRunner {
             r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
-            System.out.println("| Test failed with exception |");
             e.printStackTrace();
             testOutcome = TestOutcome.Exception;
         }
@@ -473,7 +465,6 @@ final class TestRunner {
             r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
-            System.out.println("| Test failed with exception |");
             e.printStackTrace();
             testOutcome = TestOutcome.Exception;
         }
@@ -499,7 +490,6 @@ final class TestRunner {
             r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
-            System.out.println("| Test failed with exception |");
             e.printStackTrace();
             testOutcome = TestOutcome.Exception;
         }
@@ -526,7 +516,6 @@ final class TestRunner {
             r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
-            System.out.println("| Test failed with exception |");
             e.printStackTrace();
             testOutcome = TestOutcome.Exception;
         }
@@ -553,7 +542,6 @@ final class TestRunner {
             r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
-            System.out.println("| Test failed with exception |");
             e.printStackTrace();
             testOutcome = TestOutcome.Exception;
         }
@@ -582,7 +570,135 @@ final class TestRunner {
             r6 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(5));
             testOutcome = (r1 && r2 && r3 && r4 && r5 && r6) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
-            System.out.println("| Test failed with exception |");
+            e.printStackTrace();
+            testOutcome = TestOutcome.Exception;
+        }
+
+        System.out.println();
+        return testOutcome;
+    }
+
+    private static TestOutcome test_Change_directory_relative_path() {
+        System.out.println("20. Change directory, relative path");
+        SFTPClient sftpClient = new SFTPClient();
+        boolean r1, r2, r3, r4, r5, r6;
+        TestOutcome testOutcome;
+
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        try {
+            evalClientCommand(sftpClient, "user user1");
+            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            evalClientCommand(sftpClient, "cdir folder1");
+            r4 = assertEquals("!Changed working dir to user1/folder1", sftpClient.getServerResHistory().get(3));
+            evalClientCommand(sftpClient, "cdir folder2");
+            r5 = assertEquals("!Changed working dir to user1/folder1/folder2", sftpClient.getServerResHistory().get(4));
+            evalClientCommand(sftpClient, "done");
+            r6 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(5));
+            testOutcome = (r1 && r2 && r3 && r4 && r5 && r6) ? TestOutcome.Success : TestOutcome.Failure;
+        } catch (Exception e) {
+            e.printStackTrace();
+            testOutcome = TestOutcome.Exception;
+        }
+
+        System.out.println();
+        return testOutcome;
+    }
+
+    private static TestOutcome test_Change_directory_user_path() {
+        System.out.println("21. Change directory, user root");
+        SFTPClient sftpClient = new SFTPClient();
+        boolean r1, r2, r3, r4, r5;
+        TestOutcome testOutcome;
+
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        try {
+            evalClientCommand(sftpClient, "user user1");
+            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            evalClientCommand(sftpClient, "cdir /");
+            r4 = assertEquals("!Changed working dir to user1/", sftpClient.getServerResHistory().get(3));
+            evalClientCommand(sftpClient, "done");
+            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
+        } catch (Exception e) {
+            e.printStackTrace();
+            testOutcome = TestOutcome.Exception;
+        }
+
+        System.out.println();
+        return testOutcome;
+    }
+
+    private static TestOutcome test_Change_directory_absolute_path() {
+        System.out.println("22. Change directory, absolute path");
+        SFTPClient sftpClient = new SFTPClient();
+        boolean r1, r2, r3, r4, r5;
+        TestOutcome testOutcome;
+
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        try {
+            evalClientCommand(sftpClient, "user user1");
+            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            evalClientCommand(sftpClient, "cdir /folder1/folder2");
+            r4 = assertEquals("!Changed working dir to user1/folder1/folder2", sftpClient.getServerResHistory().get(3));
+            evalClientCommand(sftpClient, "done");
+            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
+        } catch (Exception e) {
+            e.printStackTrace();
+            testOutcome = TestOutcome.Exception;
+        }
+
+        System.out.println();
+        return testOutcome;
+    }
+
+    private static TestOutcome test_Change_directory_non_existent_directory() {
+        System.out.println("23. Change directory, non-existent directory");
+        SFTPClient sftpClient = new SFTPClient();
+        boolean r1, r2, r3, r4, r5;
+        TestOutcome testOutcome;
+
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        try {
+            evalClientCommand(sftpClient, "user user1");
+            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            evalClientCommand(sftpClient, "cdir /folder1/folder2/folder3");
+            r4 = assertEquals("-Cant connect to directory because: user1/folder1/folder2/folder3 does not exist", 
+                sftpClient.getServerResHistory().get(3));
+            evalClientCommand(sftpClient, "done");
+            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
+        } catch (Exception e) {
+            e.printStackTrace();
+            testOutcome = TestOutcome.Exception;
+        }
+
+        System.out.println();
+        return testOutcome;
+    }
+
+    private static TestOutcome test_Change_directory_file_instead_of_directory() {
+        System.out.println("24. Change directory, file instead of directory");
+        SFTPClient sftpClient = new SFTPClient();
+        boolean r1, r2, r3, r4, r5;
+        TestOutcome testOutcome;
+
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        try {
+            evalClientCommand(sftpClient, "user user1");
+            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            evalClientCommand(sftpClient, "cdir temp/data.csv");
+            r4 = assertEquals("-Cant list directory because: user1/temp/data.csv is not a directory", 
+                sftpClient.getServerResHistory().get(3));
+            evalClientCommand(sftpClient, "done");
+            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
+        } catch (Exception e) {
             e.printStackTrace();
             testOutcome = TestOutcome.Exception;
         }
