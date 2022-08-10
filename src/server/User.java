@@ -25,6 +25,10 @@ public class User {
         return this.password;
     }
 
+    public String getRootDir() {
+        return this.id + "/";
+    }
+
     public boolean containsAccount(String accountName) {
         for (String account : accounts) {
             if (account.equals(accountName)) {

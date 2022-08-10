@@ -98,6 +98,7 @@ public class SFTPServer {
 		private User selectedUser;
 		private boolean isLoggedIn;
 		private String selectedAccount;
+		private String currentDir;
 
 		public SFTPClientWorker(Socket clientSocket) {
 			init(clientSocket);
@@ -169,6 +170,7 @@ public class SFTPServer {
 							return makeResponse("User-id valid, send account and password", ResponseCode.Success);
 						} else {
 							isLoggedIn = true;
+							currentDir = selectedUser.getRootDir();
 							return makeResponse(selectedUser.getId() + " logged in", ResponseCode.LoggedIn);
 						}
 					} else {
@@ -181,6 +183,7 @@ public class SFTPServer {
 							return makeResponse("Account valid, send password", ResponseCode.Success);
 						} else {
 							isLoggedIn = true;
+							currentDir = selectedUser.getRootDir();
 							return makeResponse("Account valid, logged-in", ResponseCode.LoggedIn);
 						}
 					} else {
@@ -193,6 +196,7 @@ public class SFTPServer {
 						if (selectedUser.requiresAccount() && selectedAccount == null) {
 							return makeResponse("Send account", ResponseCode.Success);
 						} else {
+							currentDir = selectedUser.getRootDir();
 							return makeResponse("Logged in", ResponseCode.LoggedIn);
 						}
 					} else {
@@ -212,7 +216,11 @@ public class SFTPServer {
 				case "list":
 					switch (commandArgs.get(0)) {
 						case "f":
-							return makeResponse(selectedUser.getId() + "/\n" + FileSystem.readDir("resources/home/user1"), ResponseCode.Success);
+							String selectedDir = currentDir;
+							if (commandArgs.size() > 1) {
+								selectedDir += commandArgs.get(1);
+							}
+							return makeResponse(FileSystem.readDir(selectedDir), ResponseCode.Success);
 						case "v":
 							return "v\0";
 						default:

@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import utils.Utils;
 
 public final class FileSystem {
+    private static final String HOME_DIR = "resources/home/";
     private static final String USER_DB = "resources/users.txt";
     private static final int USER_ID_COL = 0;
     private static final int ACCOUNT_COL = 1;
@@ -16,6 +17,10 @@ public final class FileSystem {
 
     private FileSystem() {
         throw new IllegalAccessError("server.Utils cannot be instantiated");
+    }
+
+    public static String getHomeDir() {
+        return HOME_DIR;
     }
 
     public static List<User> readUsers() {
@@ -48,18 +53,17 @@ public final class FileSystem {
         return users;
     }
 
-    public static String readDir(String path) {
-        Path dir = Paths.get(path);
+    public static String readDir(String relativePath) {
+        Path dir = Paths.get(HOME_DIR + relativePath);
         String[] files = dir.toFile().list();
         
-        StringBuilder allFiles = new StringBuilder();
+        StringBuilder dirListBuilder = new StringBuilder(relativePath + "\n");
         for (int i = 0; i < files.length; i++) {
-            allFiles.append(files[i]);
+            dirListBuilder.append(files[i]);
             if (i < (files.length - 1)) {
-                allFiles.append("\n");
+                dirListBuilder.append("\n");
             }
         }
-        
-        return allFiles.toString();
+        return dirListBuilder.toString();
     }
 }
