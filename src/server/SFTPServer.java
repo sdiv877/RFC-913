@@ -85,7 +85,7 @@ public class SFTPServer {
 				String welcomeMsg = Utils.makeResponse(SERVER_PROTOCOL + " Server", ResponseCode.Success);
 				writeToClient(welcomeMsg);
 			} catch (Exception e) {
-				Utils.logMessage("Could not open streams to client " + id);
+				Utils.logMessage("Could not open streams from client " + id);
 				e.printStackTrace();
 			}
 		}
@@ -121,6 +121,7 @@ public class SFTPServer {
 
 		private void writeToClient(String s) throws Exception {
 			outToClient.writeBytes(s);
+			outToClient.flush();
 		}
 
 		private String callCommand(String commandCall) {
@@ -163,6 +164,17 @@ public class SFTPServer {
 						}
 					} else {
 						return Utils.makeResponse("Wrong password, try again", ResponseCode.Error);
+					}
+				case "type":
+					switch (commandArgs.get(0)) {
+						case "a":
+							return Utils.makeResponse("Using Ascii mode", ResponseCode.Success);
+						case "b":
+							return Utils.makeResponse("Using Binary mode", ResponseCode.Success);
+						case "c":
+							return Utils.makeResponse("Using Continuous mode", ResponseCode.Success);
+						default:
+							return Utils.makeResponse("Type not valid", ResponseCode.Error);
 					}
 				case "done":
 					return Utils.makeResponse("Closing connection", ResponseCode.Success);

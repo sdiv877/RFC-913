@@ -5,6 +5,8 @@ import java.net.*;
 import java.util.List;
 import java.util.ArrayList;
 
+import server.Utils;
+
 public class SFTPClient {
     private static final String HOSTNAME = "localhost";
     private static final int PORT = 6789;
@@ -40,9 +42,11 @@ public class SFTPClient {
     }
 
     public void evalCommand(String cmd) throws Exception {
-        writeToServer(cmd + "\n");
-        String commandRes = readFromServer();
-        logMessage(commandRes);
+        boolean writeWasSuccessful = writeToServer(cmd + "\n");
+        if (writeWasSuccessful) {
+            String commandRes = readFromServer();
+            logMessage(commandRes);
+        }
 
         if (cmd.equals("done")) {
             closeConnection();
@@ -75,7 +79,7 @@ public class SFTPClient {
             closeConnection();
         }
     }
-    
+
     private void connectToKeyboardStream() {
         inFromUser = new BufferedReader(new InputStreamReader(System.in));
     }
@@ -112,12 +116,38 @@ public class SFTPClient {
         }
     }
 
-    private void writeToServer(String s) throws Exception {
+    private boolean writeToServer(String cmd) throws Exception {
+        String argValidityMsg = validateArgs(cmd);
+        if (argValidityMsg != null) {
+            logMessage(argValidityMsg);
+            return false;
+        }
         try {
-            outToServer.writeBytes(s);
+            outToServer.writeBytes(cmd);
+            return true;
         } catch (Exception e) {
             logMessage("Could not write to server " + HOSTNAME + ":" + PORT);
             throw e;
+        }
+    }
+
+    private String validateArgs(String cmd) {
+        List<String> commandArgs = Utils.splitString(cmd, "\\s+");
+        String commandName = commandArgs.remove(0); // first value in call is just the command name
+
+        if (commandArgs.size() <= 1)
+            return null;
+        switch (commandName) {
+            case "user":
+                return "ERROR: Invalid Arguments\nUsage: USER user-id";
+            case "acct":
+                return "ERROR: Invalid Arguments\nUsage: ACCT account";
+            case "pass":
+                return "ERROR: Invalid Arguments\nUsage: PASS password";
+            case "type":
+                return "ERROR: Invalid Arguments\nUsage: TYPE { A | B | C }";
+            default:
+                return null;
         }
     }
 
