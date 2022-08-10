@@ -32,6 +32,9 @@ final class TestRunner {
         testResults.add(test_List_standard_current_directory());
         testResults.add(test_List_standard_other_directory());
         testResults.add(test_List_verbose_current_directory());
+        testResults.add(test_List_non_existent_directory());
+        testResults.add(test_List_file_instead_of_directory());
+        testResults.add(test_List_argument_error());
 
         System.out.println("| CLIENT TESTS COMPLETED |");
         printTestResults();
@@ -495,6 +498,89 @@ final class TestRunner {
             evalClientCommand(sftpClient, "done");
             r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
+        } catch (Exception e) {
+            System.out.println("| Test failed with exception |");
+            e.printStackTrace();
+            testOutcome = TestOutcome.Exception;
+        }
+
+        System.out.println();
+        return testOutcome;
+    }
+
+    private static TestOutcome test_List_non_existent_directory() {
+        System.out.println("17. List, non-existent directory");
+        SFTPClient sftpClient = new SFTPClient();
+        boolean r1, r2, r3, r4, r5;
+        TestOutcome testOutcome;
+
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        try {
+            evalClientCommand(sftpClient, "user user1");
+            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            evalClientCommand(sftpClient, "list f fake");
+            r4 = assertEquals("-Cant list directory because: user1/fake does not exist", 
+                sftpClient.getServerResHistory().get(3));
+            evalClientCommand(sftpClient, "done");
+            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
+        } catch (Exception e) {
+            System.out.println("| Test failed with exception |");
+            e.printStackTrace();
+            testOutcome = TestOutcome.Exception;
+        }
+
+        System.out.println();
+        return testOutcome;
+    }
+
+    private static TestOutcome test_List_file_instead_of_directory() {
+        System.out.println("18. List file instead of directory");
+        SFTPClient sftpClient = new SFTPClient();
+        boolean r1, r2, r3, r4, r5;
+        TestOutcome testOutcome;
+
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        try {
+            evalClientCommand(sftpClient, "user user1");
+            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            evalClientCommand(sftpClient, "list f license.txt");
+            r4 = assertEquals("-Cant list directory because: user1/license.txt is not a directory", 
+                sftpClient.getServerResHistory().get(3));
+            evalClientCommand(sftpClient, "done");
+            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
+        } catch (Exception e) {
+            System.out.println("| Test failed with exception |");
+            e.printStackTrace();
+            testOutcome = TestOutcome.Exception;
+        }
+
+        System.out.println();
+        return testOutcome;
+    }
+
+    private static TestOutcome test_List_argument_error() {
+        System.out.println("19. List, argument error");
+        SFTPClient sftpClient = new SFTPClient();
+        boolean r1, r2, r3, r4, r5, r6;
+        TestOutcome testOutcome;
+
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        try {
+            evalClientCommand(sftpClient, "user user1");
+            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            evalClientCommand(sftpClient, "list f / /");
+            r4 = assertEquals("ERROR: Invalid Arguments\nUsage: LIST { F | V } directory-path", 
+                sftpClient.getServerResHistory().get(3));
+            evalClientCommand(sftpClient, "list g");
+            r5 = assertEquals("-Argument error", sftpClient.getServerResHistory().get(4));
+            evalClientCommand(sftpClient, "done");
+            r6 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(5));
+            testOutcome = (r1 && r2 && r3 && r4 && r5 && r6) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             System.out.println("| Test failed with exception |");
             e.printStackTrace();

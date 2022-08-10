@@ -57,6 +57,7 @@ public class SFTPServer {
 	}
 	
 	private String validateArgs(String commandName, List<String> commandArgs) {
+		if (commandArgs.size() <= 2 && commandName.equals("list")) return null;
         if (commandArgs.size() <= 1) return null;
 
         switch (commandName) {
@@ -67,7 +68,9 @@ public class SFTPServer {
 				case "pass":
                 return "ERROR: Invalid Arguments\nUsage: PASS password";
             case "type":
-			return "ERROR: Invalid Arguments\nUsage: TYPE { A | B | C }";
+				return "ERROR: Invalid Arguments\nUsage: TYPE { A | B | C }";
+			case "list":
+				return "ERROR: Invalid Arguments\nUsage: LIST { F | V } directory-path";
             default:
                 return null;
         }
@@ -217,6 +220,12 @@ public class SFTPServer {
 					String selectedDir = currentDir;
 					if (commandArgs.size() > 1) {
 						selectedDir += commandArgs.get(1);
+					}
+					if (!FileSystem.dirExists(selectedDir)) {
+						return makeResponse("Cant list directory because: " + selectedDir + " does not exist", ResponseCode.Error);
+					}
+					if (FileSystem.pathIsFile(selectedDir)) {
+						return makeResponse("Cant list directory because: " + selectedDir + " is not a directory", ResponseCode.Error); 
 					}
 					switch (commandArgs.get(0)) {
 						case "f":

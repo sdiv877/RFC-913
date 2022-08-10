@@ -54,6 +54,16 @@ public final class FileSystem {
         return users;
     }
 
+    public static boolean dirExists(String relativePath) {
+        Path dir = Paths.get(HOME_DIR + relativePath);
+        return Files.exists(dir);
+    }
+
+    public static boolean pathIsFile(String relativePath) {
+        Path filePath = Paths.get(HOME_DIR + relativePath);
+        return !Files.isDirectory(filePath);
+    }
+
     public static String readDir(String relativePath) {
         Path dir = Paths.get(HOME_DIR + relativePath);
         String[] fileNames = dir.toFile().list();
