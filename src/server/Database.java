@@ -2,27 +2,20 @@ package server;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.Files;
 
-public final class Utils {
+import utils.Utils;
+
+public final class Database {
     private static final String USER_DB = "resources/users.txt";
     private static final int USER_ID_COL = 0;
     private static final int ACCOUNT_COL = 1;
     private static final int PASSWORD_COL = 2;
 
-    private Utils() {
+    private Database() {
         throw new IllegalAccessError("server.Utils cannot be instantiated");
-    }
-
-    public static void logMessage(String msg) {
-        System.out.println(msg);
-    }
-
-    public static String makeResponse(String msg, ResponseCode responseCode) {
-        return responseCode.toString() + msg + "\n";
     }
 
     public static List<User> readUserDb() {
@@ -46,18 +39,12 @@ public final class Utils {
             String[] cols = row.split("\\|");
             // get individual values from each column in row
             String userId = cols[USER_ID_COL];
-            List<String> accounts = splitString(cols[ACCOUNT_COL], "\\s+");
+            List<String> accounts = Utils.splitString(cols[ACCOUNT_COL], "\\s+");
             String password = cols[PASSWORD_COL].equals(" ") ? null : cols[PASSWORD_COL];
             // create new user based on values
             User user = new User(userId, accounts, password);
             users.add(user);
         }
         return users;
-    }
-
-    public static ArrayList<String> splitString(String s, String regex) {
-        ArrayList<String> splitUpString = new ArrayList<String>();
-        Collections.addAll(splitUpString, s.split(regex));
-        return splitUpString;
     }
 }

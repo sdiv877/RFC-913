@@ -2,7 +2,8 @@ package client;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Scanner;
+
+import utils.Utils;
 
 final class TestRunner {
     private static String CLIENT_WELCOME_MSG = "Successfully connected to localhost on port 6789";
@@ -29,7 +30,7 @@ final class TestRunner {
 
         System.out.println("| CLIENT TESTS COMPLETED |");
         printTestResults();
-        waitForEnterKey();
+        Utils.waitForEnterKey();
     }
 
     private static boolean assertEquals(String expected, String actual) {
@@ -57,12 +58,6 @@ final class TestRunner {
             }
         }
         System.out.println("PASSED: " + successCount + "/" + testResults.size() + " tests.");
-    }
-
-    private static void waitForEnterKey() {
-        Scanner scan = new Scanner(System.in);
-        scan.nextLine();
-        scan.close();
     }
 
     private static void evalClientCommand(SFTPClient sftpClient, String cmd) throws Exception {

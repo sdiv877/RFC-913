@@ -3,6 +3,9 @@ package server;
 import java.io.*;
 import java.net.*;
 import java.util.List;
+import java.util.ArrayList;
+
+import utils.Utils;
 
 public class SFTPServer {
 	private static final String HOSTNAME = "localhost";
@@ -20,7 +23,7 @@ public class SFTPServer {
 	}
 
 	public SFTPServer() {
-		users = Utils.readUserDb();
+		users = Database.readUserDb();
 		start();
 	}
 
@@ -34,9 +37,9 @@ public class SFTPServer {
 				// instantiate ClientHandler with new connection and run on new thread
 				SFTPClientWorker clientHandler = new SFTPClientWorker(incomingClientSocket);
 				new Thread(clientHandler).start();
-				Utils.logMessage("New client connected with id: " + clientHandler.getId() + " (total active: " + numActiveClients + ")");
+				logMessage("New client connected with id: " + clientHandler.getId() + " (total active: " + numActiveClients + ")");
 			} catch (Exception e) {
-				Utils.logMessage("Could not connect to incoming client socket");
+				logMessage("Could not connect to incoming client socket");
 			}
 		}
 	}
@@ -45,9 +48,9 @@ public class SFTPServer {
 		try {
 			welcomeSocket = new ServerSocket(PORT);
 			welcomeSocket.setReuseAddress(true);
-			Utils.logMessage("Server started on " + HOSTNAME + " port " + PORT + " [Protocol: " + SERVER_PROTOCOL + "]");
+			logMessage("Server started on " + HOSTNAME + " port " + PORT + " [Protocol: " + SERVER_PROTOCOL + "]");
 		} catch (Exception e) {
-			Utils.logMessage("Could not start server on " + HOSTNAME + " port " + PORT);
+			logMessage("Could not start server on " + HOSTNAME + " port " + PORT);
 			e.printStackTrace();
 			System.exit(0);
 		}
@@ -61,6 +64,14 @@ public class SFTPServer {
 		}
 		return null;
 	}
+
+	private static void logMessage(String msg) {
+        System.out.println(msg);
+    }
+
+    private static String makeResponse(String msg, ResponseCode responseCode) {
+        return responseCode.toString() + msg + "\n";
+    }
 
 	private class SFTPClientWorker implements Runnable {
 		private int id;
@@ -82,10 +93,10 @@ public class SFTPServer {
 			try {
 				inFromClient = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 				outToClient = new DataOutputStream(clientSocket.getOutputStream());
-				String welcomeMsg = Utils.makeResponse(SERVER_PROTOCOL + " Server", ResponseCode.Success);
+				String welcomeMsg = makeResponse(SERVER_PROTOCOL + " Server", ResponseCode.Success);
 				writeToClient(welcomeMsg);
 			} catch (Exception e) {
-				Utils.logMessage("Could not open streams from client " + id);
+				logMessage("Could not open streams from client " + id);
 				e.printStackTrace();
 			}
 		}
@@ -125,7 +136,7 @@ public class SFTPServer {
 		}
 
 		private String callCommand(String commandCall) {
-			List<String> commandArgs = Utils.splitString(commandCall, "\\s+");
+			ArrayList<String> commandArgs = Utils.splitString(commandCall, "\\s+");
 			String commandName = commandArgs.remove(0); // first value in call is just the command name
 
 			switch (commandName) {
@@ -133,53 +144,53 @@ public class SFTPServer {
 					selectedUser = getUser(commandArgs.get(0));
 					if (selectedUser != null) {
 						if (selectedUser.requiresAccount() || selectedUser.requiresPassword()) {
-							return Utils.makeResponse("User-id valid, send account and password", ResponseCode.Success);
+							return makeResponse("User-id valid, send account and password", ResponseCode.Success);
 						} else {
 							isLoggedIn = true;
-							return Utils.makeResponse(selectedUser.getId() + " logged in", ResponseCode.LoggedIn);
+							return makeResponse(selectedUser.getId() + " logged in", ResponseCode.LoggedIn);
 						}
 					} else {
-						return Utils.makeResponse("Invalid user-id, try again", ResponseCode.Error);
+						return makeResponse("Invalid user-id, try again", ResponseCode.Error);
 					}
 				case "acct":
 					if (selectedUser.containsAccount(commandArgs.get(0))) {
 						selectedAccount = commandArgs.get(0);
 						if (selectedUser.requiresPassword() && !isLoggedIn) {
-							return Utils.makeResponse("Account valid, send password", ResponseCode.Success);
+							return makeResponse("Account valid, send password", ResponseCode.Success);
 						} else {
 							isLoggedIn = true;
-							return Utils.makeResponse("Account valid, logged-in", ResponseCode.LoggedIn);
+							return makeResponse("Account valid, logged-in", ResponseCode.LoggedIn);
 						}
 					} else {
 						selectedAccount = null;
-						return Utils.makeResponse("Invalid account, try again", ResponseCode.Error);
+						return makeResponse("Invalid account, try again", ResponseCode.Error);
 					}
 				case "pass":
 					if (selectedUser.getPassword().equals(commandArgs.get(0))) {
 						isLoggedIn = true;
 						if (selectedUser.requiresAccount() && selectedAccount == null) {
-							return Utils.makeResponse("Send account", ResponseCode.Success);
+							return makeResponse("Send account", ResponseCode.Success);
 						} else {
-							return Utils.makeResponse("Logged in", ResponseCode.LoggedIn);
+							return makeResponse("Logged in", ResponseCode.LoggedIn);
 						}
 					} else {
-						return Utils.makeResponse("Wrong password, try again", ResponseCode.Error);
+						return makeResponse("Wrong password, try again", ResponseCode.Error);
 					}
 				case "type":
 					switch (commandArgs.get(0)) {
 						case "a":
-							return Utils.makeResponse("Using Ascii mode", ResponseCode.Success);
+							return makeResponse("Using Ascii mode", ResponseCode.Success);
 						case "b":
-							return Utils.makeResponse("Using Binary mode", ResponseCode.Success);
+							return makeResponse("Using Binary mode", ResponseCode.Success);
 						case "c":
-							return Utils.makeResponse("Using Continuous mode", ResponseCode.Success);
+							return makeResponse("Using Continuous mode", ResponseCode.Success);
 						default:
-							return Utils.makeResponse("Type not valid", ResponseCode.Error);
+							return makeResponse("Type not valid", ResponseCode.Error);
 					}
 				case "done":
-					return Utils.makeResponse("Closing connection", ResponseCode.Success);
+					return makeResponse("Closing connection", ResponseCode.Success);
 				default:
-					return Utils.makeResponse("Could not call command", ResponseCode.Error);
+					return makeResponse("Could not call command", ResponseCode.Error);
 			}
 		}
 
@@ -189,9 +200,9 @@ public class SFTPServer {
 				clientSocket.close();
 				inFromClient.close();
 				outToClient.close();
-				Utils.logMessage("Client " + id + " disconnected (total active: " + numActiveClients + ")");
+				logMessage("Client " + id + " disconnected (total active: " + numActiveClients + ")");
 			} catch (Exception e) {
-				Utils.logMessage("Failed to close connection to client " + id);
+				logMessage("Failed to close connection to client " + id);
 			}
 		}
 	}

@@ -5,7 +5,7 @@ import java.net.*;
 import java.util.List;
 import java.util.ArrayList;
 
-import server.Utils;
+import utils.Utils;
 
 public class SFTPClient {
     private static final String HOSTNAME = "localhost";
