@@ -9,6 +9,7 @@ import utils.Utils;
 final class TestRunner {
     private static String CLIENT_WELCOME_MSG = "Successfully connected to localhost on port 6789";
     private static String SERVER_WELCOME_MSG = "+RFC 913 SFTP Server";
+    private static String ANY_NEWLINE = "\r?\n|\r";
 
     private static List<TestOutcome> testResults = new ArrayList<TestOutcome>();
 
@@ -30,6 +31,7 @@ final class TestRunner {
         testResults.add(test_Type_argument_error());
         testResults.add(test_List_standard_current_directory());
         testResults.add(test_List_standard_other_directory());
+        testResults.add(test_List_verbose_current_directory());
 
         System.out.println("| CLIENT TESTS COMPLETED |");
         printTestResults();
@@ -40,12 +42,8 @@ final class TestRunner {
         return actual.equals(expected);
     }
 
-    private static boolean assertStartsWith(String expected, String actual) {
-        return actual.startsWith(expected);
-    }
-
-    private static boolean assertContainsAll(List<String> expectedList, String actual) {
-        ArrayList<String> actualList = Utils.splitString(actual, "\\s+");
+    private static boolean assertContainsAll(List<String> expectedList, String actual, String regex) {
+        ArrayList<String> actualList = Utils.splitString(actual, regex);
         for (String expected : expectedList) {
             if (!actualList.contains(expected)) {
                 System.out.println("MISSING: " + expected);
@@ -72,6 +70,7 @@ final class TestRunner {
             }
         }
         System.out.println("PASSED: " + successCount + "/" + testResults.size() + " tests.");
+        System.out.println("Please verify Test 16 manually.");
     }
 
     private static void evalClientCommand(SFTPClient sftpClient, String cmd) throws Exception {
@@ -428,8 +427,8 @@ final class TestRunner {
     private static TestOutcome test_List_standard_current_directory() {
         System.out.println("14. List standard, current directory");
         SFTPClient sftpClient = new SFTPClient();
-        List<String> expectedFiles = Arrays.asList("+user1/", "file2.txt", "file.txt", "file3.txt", "file1.txt", "temp", "file4.txt", 
-            ".DS_Store", "data2.jpg", "data.jpg", "folder1", "license.txt");
+        List<String> expectedFiles = Arrays.asList("+user1/", "file2.txt", "file.txt", "file3.txt", "file1.txt", 
+            "temp", "file4.txt", ".DS_Store", "data2.jpg", "data.jpg", "folder1", "license.txt");
         boolean r1, r2, r3, r4, r5;
         TestOutcome testOutcome;
 
@@ -439,7 +438,7 @@ final class TestRunner {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
             evalClientCommand(sftpClient, "list f");
-            r4 =  assertContainsAll(expectedFiles, sftpClient.getServerResHistory().get(3));
+            r4 =  assertContainsAll(expectedFiles, sftpClient.getServerResHistory().get(3), ANY_NEWLINE);
             evalClientCommand(sftpClient, "done");
             r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
@@ -466,7 +465,33 @@ final class TestRunner {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
             evalClientCommand(sftpClient, "list f temp");
-            r4 =  assertContainsAll(expectedFiles, sftpClient.getServerResHistory().get(3));
+            r4 =  assertContainsAll(expectedFiles, sftpClient.getServerResHistory().get(3), ANY_NEWLINE);
+            evalClientCommand(sftpClient, "done");
+            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
+        } catch (Exception e) {
+            System.out.println("| Test failed with exception |");
+            e.printStackTrace();
+            testOutcome = TestOutcome.Exception;
+        }
+
+        System.out.println();
+        return testOutcome;
+    }
+
+    private static TestOutcome test_List_verbose_current_directory() {
+        System.out.println("16. List verbose, current directory");
+        SFTPClient sftpClient = new SFTPClient();
+        boolean r1, r2, r3, r4, r5;
+        TestOutcome testOutcome;
+
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        try {
+            evalClientCommand(sftpClient, "user user1");
+            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            evalClientCommand(sftpClient, "list v");
+            r4 =  true; // tested visually
             evalClientCommand(sftpClient, "done");
             r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.io.File;
 import java.nio.file.Files;
 
 import utils.Utils;
@@ -55,11 +56,29 @@ public final class FileSystem {
 
     public static String readDir(String relativePath) {
         Path dir = Paths.get(HOME_DIR + relativePath);
-        String[] files = dir.toFile().list();
+        String[] fileNames = dir.toFile().list();
         
         StringBuilder dirListBuilder = new StringBuilder(relativePath + "\n");
+        for (int i = 0; i < fileNames.length; i++) {
+            dirListBuilder.append(fileNames[i]);
+            if (i < (fileNames.length - 1)) {
+                dirListBuilder.append("\n");
+            }
+        }
+        return dirListBuilder.toString();
+    }
+
+    public static String readDirVerbose(String relativePath) {
+        Path dir = Paths.get(HOME_DIR + relativePath);
+        File[] files = dir.toFile().listFiles();
+        
+        StringBuilder dirListBuilder = new StringBuilder(relativePath + "\n");
+        relativePath = Utils.appendIfMissing(relativePath, "/");
         for (int i = 0; i < files.length; i++) {
-            dirListBuilder.append(files[i]);
+            dirListBuilder.append("Name: " + files[i].getName() + 
+                "    Path: " + relativePath + files[i].getName() + 
+                "    Size: " + files[i].length() + " Bytes"
+            );
             if (i < (files.length - 1)) {
                 dirListBuilder.append("\n");
             }

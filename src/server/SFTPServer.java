@@ -214,15 +214,15 @@ public class SFTPServer {
 							return makeResponse("Type not valid", ResponseCode.Error);
 					}
 				case "list":
+					String selectedDir = currentDir;
+					if (commandArgs.size() > 1) {
+						selectedDir += commandArgs.get(1);
+					}
 					switch (commandArgs.get(0)) {
 						case "f":
-							String selectedDir = currentDir;
-							if (commandArgs.size() > 1) {
-								selectedDir += commandArgs.get(1);
-							}
 							return makeResponse(FileSystem.readDir(selectedDir), ResponseCode.Success);
 						case "v":
-							return "v\0";
+							return makeResponse(FileSystem.readDirVerbose(selectedDir), ResponseCode.Success);
 						default:
 							return makeResponse("Argument error", ResponseCode.Error);
 					}
