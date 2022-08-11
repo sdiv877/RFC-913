@@ -17,8 +17,8 @@ final class TestRunner {
 
     public static void main(String[] argv) throws Exception {
         initTestFiles();
-        System.out.println("| RUNNING CLIENT TESTS |\n");
 
+        System.out.println("| RUNNING CLIENT TESTS |\n");
         testResults.add(test_User_id_valid());
         testResults.add(test_User_id_valid_account_required());
         testResults.add(test_User_id_valid_password_required());
@@ -61,8 +61,11 @@ final class TestRunner {
         testResults.add(test_Retrieve_non_existent_file());
         testResults.add(test_Retrieve_directory_instead_of_file());
         testResults.add(test_Retrieve_argument_error());
-
+        testResults.add(test_Store_new_file_does_not_exist());
+        testResults.add(test_Store_new_file_exists());
         System.out.println("| CLIENT TESTS COMPLETED |");
+
+        clearGeneratedFiles();
         printTestResults();
         Utils.waitForEnterKey();
     }
@@ -70,6 +73,12 @@ final class TestRunner {
     private static void initTestFiles() {
         FileSystem.writeFile("user1/delete.txt", "");
         FileSystem.writeFile("user1/rename.txt", "");
+        FileSystem.writeFile("user1/file.txt", "");
+    }
+
+    private static void clearGeneratedFiles() {
+        FileSystem.writeFile("user1/file.txt", "");
+        FileSystem.deleteFile("user1/file5.txt");
     }
 
     private static boolean assertEquals(String expected, String actual) {
@@ -1209,6 +1218,66 @@ final class TestRunner {
             evalClientCommand(sftpClient, "done");
             r8 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(7));
             testOutcome = (r1 && r2 && r3 && r4 && r5 && r6 && r7 && r8) ? TestOutcome.Success : TestOutcome.Failure;
+        } catch (Exception e) {
+            e.printStackTrace();
+            testOutcome = TestOutcome.Exception;
+        }
+
+        System.out.println();
+        return testOutcome;
+    }
+
+    private static TestOutcome test_Store_new_file_does_not_exist() {
+        FileSystem.deleteFile("user1/file.txt");
+        System.out.println("43. Store new, file does not exist");
+        SFTPClient sftpClient = new SFTPClient();
+        boolean r1, r2, r3, r4, r5, r6, r7;
+        TestOutcome testOutcome;
+
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        try {
+            evalClientCommand(sftpClient, "user user1");
+            r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
+            evalClientCommand(sftpClient, "stor new file.txt");
+            r4 = assertEquals("+File does not exist, will create new file", sftpClient.getLogHistory().get(3));
+            evalClientCommand(sftpClient, "size 8");
+            r5 = assertEquals("+ok, waiting for file", sftpClient.getLogHistory().get(4));
+            evalClientCommand(sftpClient, "BOT TEXT");
+            r6 = assertEquals("+Saved user1/file.txt", sftpClient.getLogHistory().get(5));
+            evalClientCommand(sftpClient, "done");
+            r7 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(6));
+            testOutcome = (r1 && r2 && r3 && r4 && r5 && r6 && r7) ? TestOutcome.Success : TestOutcome.Failure;
+        } catch (Exception e) {
+            e.printStackTrace();
+            testOutcome = TestOutcome.Exception;
+        }
+
+        System.out.println();
+        FileSystem.writeFile("user1/file.txt", "");
+        return testOutcome;
+    }
+
+    private static TestOutcome test_Store_new_file_exists() {
+        System.out.println("44. Store new, file exists");
+        SFTPClient sftpClient = new SFTPClient();
+        boolean r1, r2, r3, r4, r5, r6, r7;
+        TestOutcome testOutcome;
+
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        try {
+            evalClientCommand(sftpClient, "user user1");
+            r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
+            evalClientCommand(sftpClient, "stor new file.txt");
+            r4 = assertEquals("+File exists, will create new generation of file", sftpClient.getLogHistory().get(3));
+            evalClientCommand(sftpClient, "size 8");
+            r5 = assertEquals("+ok, waiting for file", sftpClient.getLogHistory().get(4));
+            evalClientCommand(sftpClient, "BOT TEXT");
+            r6 = assertEquals("+Saved user1/file5.txt", sftpClient.getLogHistory().get(5));
+            evalClientCommand(sftpClient, "done");
+            r7 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(6));
+            testOutcome = (r1 && r2 && r3 && r4 && r5 && r6 && r7) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
             testOutcome = TestOutcome.Exception;

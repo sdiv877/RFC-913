@@ -29,6 +29,16 @@ public final class Utils {
         return s;
     }
 
+    public static String safeSubstring(String str, int beginIndex, int endIndex) {
+        if (endIndex > str.length()) {
+            endIndex = str.length();
+        }
+        if (beginIndex < 0) {
+            beginIndex = 0;
+        }
+        return str.substring(beginIndex, endIndex);
+    }
+
     public static String unEscapeString(String s){
 		StringBuilder sb = new StringBuilder();
 		for (int i=0; i<s.length(); i++)

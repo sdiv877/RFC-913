@@ -78,6 +78,7 @@ public class SFTPServer {
 		private String pendingDirChange;
 		private String pendingFileToRename;
 		private String pendingFileToRetrieve;
+		private PendingStorFile pendingStorFile;
 
 		public SFTPClientWorker(Socket clientSocket) {
 			this.id = ++numAttemptedClients;
@@ -219,6 +220,10 @@ public class SFTPServer {
 					return send();
 				case "stop":
 					return stop();
+				case "stor":
+					return stor(commandArgs.get(0), commandArgs.get(1));
+				case "size":
+					return size(Integer.valueOf(commandArgs.get(0)));
 				default:
 					return makeResponse("Could not call command", ResponseCode.Error);
 			}
@@ -394,6 +399,31 @@ public class SFTPServer {
 		private String stop() {
 			pendingFileToRetrieve = null;
 			return makeResponse("File will not be sent", ResponseCode.Success);
+		}
+
+		private String stor(String mode, String fileName) {
+			String selectedFile = Utils.appendIfMissing(currentDir, "/") + fileName;
+			if (!FileSystem.pathExists(selectedFile)) {
+				pendingStorFile = new PendingStorFile(selectedFile, mode);
+				return makeResponse("File does not exist, will create new file", ResponseCode.Success);
+			}
+			selectedFile = FileSystem.getUniqueFileName(fileName, currentDir);
+			pendingStorFile = new PendingStorFile(selectedFile, mode);
+			return makeResponse("File exists, will create new generation of file", ResponseCode.Success);
+		}
+
+		private String size(int maxBytes) {
+			try {
+				writeToClient(makeResponse("ok, waiting for file", ResponseCode.Success));
+				pendingStorFile.setMaxBytes(maxBytes);
+				pendingStorFile.setBytesToWrite(inFromClient.readLine());
+				FileSystem.writeFile(pendingStorFile);
+			} catch (Exception e) {
+				// e.printStackTrace();
+				return makeResponse("Couldn't save " + e.getLocalizedMessage(), ResponseCode.Error);
+			}
+
+			return makeResponse("Saved " + pendingStorFile.getFilePath(), ResponseCode.Success);
 		}
 	}
 }

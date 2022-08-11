@@ -556,6 +556,8 @@ Successfully connected to localhost on port 6789
 > stor new file.txt
 +File does not exist, will create new file
 > size 8
++ok, waiting for file
+> BOT TEXT
 +Saved user1/file.txt
 > done
 +Closing connection
@@ -568,6 +570,8 @@ Successfully connected to localhost on port 6789
 > stor new file.txt
 +File exists, will create new generation of file
 > size 8
++ok, waiting for file
+> BOT TEXT
 +Saved user1/file5.txt
 > done
 +Closing connection

@@ -89,6 +89,10 @@ public final class FileSystem {
         }
     }
 
+    public static void writeFile(PendingStorFile storFile) {
+        writeFile(storFile.getFilePath(), storFile.getClampedBytesToWrite());
+    }
+
     public static String readFile(String relativeFilePath) {
         try {
             Path filePath = Paths.get(HOME_DIR + relativeFilePath);
@@ -113,6 +117,31 @@ public final class FileSystem {
     public static long getFileSize(String relativeFilePath) {
         File file = Paths.get(HOME_DIR + relativeFilePath).toFile();
         return file.length();
+    }
+
+    public static String getUniqueFileName(String baseFile, String relativeDirName) {
+        String baseName;
+        String baseExtension;
+        if (baseFile.contains(".")) {
+            ArrayList<String> baseComponents = Utils.splitString(baseFile, "\\.");
+            StringBuilder baseNameBuilder = new StringBuilder();
+            for (int i = 0; i < baseComponents.size() - 1; i++) {
+                baseNameBuilder.append(baseComponents.get(i));
+            }
+            baseName = baseNameBuilder.toString();
+            baseExtension = baseComponents.get(baseComponents.size() - 1);
+        } else {
+            baseName = baseFile;
+            baseExtension = "";
+        }
+
+        String filesInDir = readDir(relativeDirName);
+        int i = 1;
+        while (filesInDir.contains(baseFile)) {
+            baseFile = baseName + i + "." + baseExtension;
+            i++;
+        }
+        return Utils.appendIfMissing(relativeDirName, "/") + baseFile;
     }
 
     private static List<User> readUsers() {
