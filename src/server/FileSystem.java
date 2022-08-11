@@ -15,6 +15,7 @@ public final class FileSystem {
     private static final int USER_ID_COL = 0;
     private static final int ACCOUNT_COL = 1;
     private static final int PASSWORD_COL = 2;
+    private static List<User> users = readUsers();
 
     private FileSystem() {
         throw new IllegalAccessError("server.Utils cannot be instantiated");
@@ -24,7 +25,58 @@ public final class FileSystem {
         return HOME_DIR;
     }
 
-    public static List<User> readUsers() {
+    public static User getUser(String userId) {
+        for (User user : FileSystem.users) {
+            if (user.getId().equals(userId)) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    public static boolean dirExists(String relativePath) {
+        Path dir = Paths.get(HOME_DIR + relativePath);
+        return Files.exists(dir);
+    }
+
+    public static boolean pathIsFile(String relativePath) {
+        Path filePath = Paths.get(HOME_DIR + relativePath);
+        return !Files.isDirectory(filePath);
+    }
+
+    public static String readDir(String relativePath) {
+        Path dir = Paths.get(HOME_DIR + relativePath);
+        String[] fileNames = dir.toFile().list();
+
+        StringBuilder dirListBuilder = new StringBuilder(relativePath + "\n");
+        for (int i = 0; i < fileNames.length; i++) {
+            dirListBuilder.append(fileNames[i]);
+            if (i < (fileNames.length - 1)) {
+                dirListBuilder.append("\n");
+            }
+        }
+        return dirListBuilder.toString();
+    }
+
+    public static String readDirVerbose(String relativePath) {
+        Path dir = Paths.get(HOME_DIR + relativePath);
+        File[] files = dir.toFile().listFiles();
+
+        StringBuilder dirListBuilder = new StringBuilder(relativePath + "\n");
+        relativePath = Utils.appendIfMissing(relativePath, "/");
+        for (int i = 0; i < files.length; i++) {
+            dirListBuilder.append("Name: " + files[i].getName() + 
+                "    Path: " + relativePath + files[i].getName() + 
+                "    Size: " + files[i].length() + " Bytes"
+            );
+            if (i < (files.length - 1)) {
+                dirListBuilder.append("\n");
+            }
+        }
+        return dirListBuilder.toString();
+    }
+
+    private static List<User> readUsers() {
         List<String> userData = new ArrayList<String>();
         List<User> users = new ArrayList<User>();
 
@@ -52,47 +104,5 @@ public final class FileSystem {
             users.add(user);
         }
         return users;
-    }
-
-    public static boolean dirExists(String relativePath) {
-        Path dir = Paths.get(HOME_DIR + relativePath);
-        return Files.exists(dir);
-    }
-
-    public static boolean pathIsFile(String relativePath) {
-        Path filePath = Paths.get(HOME_DIR + relativePath);
-        return !Files.isDirectory(filePath);
-    }
-
-    public static String readDir(String relativePath) {
-        Path dir = Paths.get(HOME_DIR + relativePath);
-        String[] fileNames = dir.toFile().list();
-        
-        StringBuilder dirListBuilder = new StringBuilder(relativePath + "\n");
-        for (int i = 0; i < fileNames.length; i++) {
-            dirListBuilder.append(fileNames[i]);
-            if (i < (fileNames.length - 1)) {
-                dirListBuilder.append("\n");
-            }
-        }
-        return dirListBuilder.toString();
-    }
-
-    public static String readDirVerbose(String relativePath) {
-        Path dir = Paths.get(HOME_DIR + relativePath);
-        File[] files = dir.toFile().listFiles();
-        
-        StringBuilder dirListBuilder = new StringBuilder(relativePath + "\n");
-        relativePath = Utils.appendIfMissing(relativePath, "/");
-        for (int i = 0; i < files.length; i++) {
-            dirListBuilder.append("Name: " + files[i].getName() + 
-                "    Path: " + relativePath + files[i].getName() + 
-                "    Size: " + files[i].length() + " Bytes"
-            );
-            if (i < (files.length - 1)) {
-                dirListBuilder.append("\n");
-            }
-        }
-        return dirListBuilder.toString();
     }
 }
