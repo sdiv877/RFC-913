@@ -13,10 +13,10 @@ public class SFTPClient {
     private BufferedReader inFromUser;
     private DataInputStream inFromServer;
     private DataOutputStream outToServer;
-    private List<String> serverResHistory;
+    private List<String> logHistory;
 
     public SFTPClient() {
-        serverResHistory = new ArrayList<String>();
+        logHistory = new ArrayList<String>();
         // Attempt to connect to user keyboard stream/server
         connectToKeyboardStream();
         connectToServer();
@@ -53,8 +53,8 @@ public class SFTPClient {
         return clientSocket.isClosed();
     }
 
-    public List<String> getServerResHistory() {
-        return serverResHistory;
+    public List<String> getLogHistory() {
+        return logHistory;
     }
 
     private void connectToServer() {
@@ -127,6 +127,6 @@ public class SFTPClient {
 
     private void logMessage(String msg) {
         System.out.println(msg);
-        serverResHistory.add(msg);
+        logHistory.add(msg);
     }
 }

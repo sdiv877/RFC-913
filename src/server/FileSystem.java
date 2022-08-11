@@ -18,7 +18,7 @@ public final class FileSystem {
     private static List<User> users = readUsers();
 
     private FileSystem() {
-        throw new IllegalAccessError("server.Utils cannot be instantiated");
+        throw new IllegalAccessError("server.FileSystem cannot be instantiated");
     }
 
     public static String getHomeDir() {

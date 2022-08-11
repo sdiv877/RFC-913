@@ -122,13 +122,13 @@ final class TestRunner {
         boolean r1, r2, r3, r4;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
-            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "done");
-            r4 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(3));
+            r4 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(3));
             testOutcome = (r1 && r2 && r3 && r4) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -145,15 +145,15 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user2");
-            r3 = assertEquals("+User-id valid, send account and password", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("+User-id valid, send account and password", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "acct acct1");
-            r4 = assertEquals("!Account valid, logged-in", sftpClient.getServerResHistory().get(3));
+            r4 = assertEquals("!Account valid, logged-in", sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "done");
-            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            r5 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -170,15 +170,15 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user3");
-            r3 = assertEquals("+User-id valid, send account and password", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("+User-id valid, send account and password", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "pass pass3");
-            r4 = assertEquals("!Logged in", sftpClient.getServerResHistory().get(3));
+            r4 = assertEquals("!Logged in", sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "done");
-            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            r5 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -195,17 +195,17 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5, r6;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user4");
-            r3 = assertEquals("+User-id valid, send account and password", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("+User-id valid, send account and password", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "acct acct1");
-            r4 = assertEquals("+Account valid, send password", sftpClient.getServerResHistory().get(3));
+            r4 = assertEquals("+Account valid, send password", sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "pass pass4");
-            r5 = assertEquals("!Logged in", sftpClient.getServerResHistory().get(4));
+            r5 = assertEquals("!Logged in", sftpClient.getLogHistory().get(4));
             evalClientCommand(sftpClient, "done");
-            r6 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(5));
+            r6 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(5));
             testOutcome = (r1 && r2 && r3 && r4 && r5 && r6) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -222,21 +222,21 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5, r6, r7, r8;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user5");
-            r3 = assertEquals("+User-id valid, send account and password", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("+User-id valid, send account and password", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "pass pass5");
-            r4 = assertEquals("+Send account", sftpClient.getServerResHistory().get(3));
+            r4 = assertEquals("+Send account", sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "acct acct1");
-            r5 = assertEquals("!Account valid, logged-in", sftpClient.getServerResHistory().get(4));
+            r5 = assertEquals("!Account valid, logged-in", sftpClient.getLogHistory().get(4));
             evalClientCommand(sftpClient, "acct acct2");
-            r6 = assertEquals("!Account valid, logged-in", sftpClient.getServerResHistory().get(5));
+            r6 = assertEquals("!Account valid, logged-in", sftpClient.getLogHistory().get(5));
             evalClientCommand(sftpClient, "acct acct3");
-            r7 = assertEquals("!Account valid, logged-in", sftpClient.getServerResHistory().get(6));
+            r7 = assertEquals("!Account valid, logged-in", sftpClient.getLogHistory().get(6));
             evalClientCommand(sftpClient, "done");
-            r8 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(7));
+            r8 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(7));
             testOutcome = (r1 && r2 && r3 && r4 && r5 && r6 && r7 && r8) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -253,13 +253,13 @@ final class TestRunner {
         boolean r1, r2, r3, r4;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user7");
-            r3 = assertEquals("-Invalid user-id, try again", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("-Invalid user-id, try again", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "done");
-            r4 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(3));
+            r4 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(3));
             testOutcome = (r1 && r2 && r3 && r4) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -276,15 +276,15 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user4");
-            r3 = assertEquals("+User-id valid, send account and password", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("+User-id valid, send account and password", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "acct acct2");
-            r4 = assertEquals("-Invalid account, try again", sftpClient.getServerResHistory().get(3));
+            r4 = assertEquals("-Invalid account, try again", sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "done");
-            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            r5 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -301,15 +301,15 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user4");
-            r3 = assertEquals("+User-id valid, send account and password", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("+User-id valid, send account and password", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "pass wrong");
-            r4 = assertEquals("-Wrong password, try again", sftpClient.getServerResHistory().get(3));
+            r4 = assertEquals("-Wrong password, try again", sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "done");
-            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            r5 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -326,13 +326,13 @@ final class TestRunner {
         boolean r1, r2, r3, r4;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user7 user7");
-            r3 = assertEquals("ERROR: Invalid Arguments\nUsage: USER user-id", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("ERROR: Invalid Arguments\nUsage: USER user-id", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "done");
-            r4 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(3));
+            r4 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(3));
             testOutcome = (r1 && r2 && r3 && r4) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -349,15 +349,15 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user4");
-            r3 = assertEquals("+User-id valid, send account and password", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("+User-id valid, send account and password", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "acct acct2 acct2");
-            r4 = assertEquals("ERROR: Invalid Arguments\nUsage: ACCT account", sftpClient.getServerResHistory().get(3));
+            r4 = assertEquals("ERROR: Invalid Arguments\nUsage: ACCT account", sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "done");
-            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            r5 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -374,15 +374,15 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user4");
-            r3 = assertEquals("+User-id valid, send account and password", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("+User-id valid, send account and password", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "pass wrong wrong");
-            r4 = assertEquals("ERROR: Invalid Arguments\nUsage: PASS password", sftpClient.getServerResHistory().get(3));
+            r4 = assertEquals("ERROR: Invalid Arguments\nUsage: PASS password", sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "done");
-            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            r5 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -399,19 +399,19 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5, r6, r7;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
-            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "type a");
-            r4 = assertEquals("+Using Ascii mode", sftpClient.getServerResHistory().get(3));
+            r4 = assertEquals("+Using Ascii mode", sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "type b");
-            r5 = assertEquals("+Using Binary mode", sftpClient.getServerResHistory().get(4));
+            r5 = assertEquals("+Using Binary mode", sftpClient.getLogHistory().get(4));
             evalClientCommand(sftpClient, "type c");
-            r6 = assertEquals("+Using Continuous mode", sftpClient.getServerResHistory().get(5));
+            r6 = assertEquals("+Using Continuous mode", sftpClient.getLogHistory().get(5));
             evalClientCommand(sftpClient, "done");
-            r7 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(6));
+            r7 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(6));
             testOutcome = (r1 && r2 && r3 && r4 && r5 && r6 && r7) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -428,17 +428,17 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5, r6;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
-            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "type a a");
-            r4 = assertEquals("ERROR: Invalid Arguments\nUsage: TYPE { A | B | C }", sftpClient.getServerResHistory().get(3));
+            r4 = assertEquals("ERROR: Invalid Arguments\nUsage: TYPE { A | B | C }", sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "type d");
-            r5 = assertEquals("-Type not valid", sftpClient.getServerResHistory().get(4));
+            r5 = assertEquals("-Type not valid", sftpClient.getLogHistory().get(4));
             evalClientCommand(sftpClient, "done");
-            r6 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(5));
+            r6 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(5));
             testOutcome = (r1 && r2 && r3 && r4 && r5 && r6) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -457,15 +457,15 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
-            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "list f");
-            r4 =  assertContainsAll(expectedFiles, sftpClient.getServerResHistory().get(3), ANY_NEWLINE);
+            r4 =  assertContainsAll(expectedFiles, sftpClient.getLogHistory().get(3), ANY_NEWLINE);
             evalClientCommand(sftpClient, "done");
-            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            r5 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -483,15 +483,15 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
-            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "list f temp");
-            r4 =  assertContainsAll(expectedFiles, sftpClient.getServerResHistory().get(3), ANY_NEWLINE);
+            r4 =  assertContainsAll(expectedFiles, sftpClient.getLogHistory().get(3), ANY_NEWLINE);
             evalClientCommand(sftpClient, "done");
-            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            r5 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -508,15 +508,15 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
-            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "list v");
             r4 =  true; // tested visually
             evalClientCommand(sftpClient, "done");
-            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            r5 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -533,16 +533,16 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
-            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "list f fake");
             r4 = assertEquals("-Cant list directory because: user1/fake does not exist", 
-                sftpClient.getServerResHistory().get(3));
+                sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "done");
-            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            r5 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -559,16 +559,16 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
-            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "list f license.txt");
             r4 = assertEquals("-Cant list directory because: user1/license.txt is not a directory", 
-                sftpClient.getServerResHistory().get(3));
+                sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "done");
-            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            r5 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -585,18 +585,18 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5, r6;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
-            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "list f / /");
             r4 = assertEquals("ERROR: Invalid Arguments\nUsage: LIST { F | V } directory-path", 
-                sftpClient.getServerResHistory().get(3));
+                sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "list g");
-            r5 = assertEquals("-Argument error", sftpClient.getServerResHistory().get(4));
+            r5 = assertEquals("-Argument error", sftpClient.getLogHistory().get(4));
             evalClientCommand(sftpClient, "done");
-            r6 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(5));
+            r6 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(5));
             testOutcome = (r1 && r2 && r3 && r4 && r5 && r6) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -613,17 +613,17 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5, r6;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
-            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "cdir folder1");
-            r4 = assertEquals("!Changed working dir to user1/folder1", sftpClient.getServerResHistory().get(3));
+            r4 = assertEquals("!Changed working dir to user1/folder1", sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "cdir folder2");
-            r5 = assertEquals("!Changed working dir to user1/folder1/folder2", sftpClient.getServerResHistory().get(4));
+            r5 = assertEquals("!Changed working dir to user1/folder1/folder2", sftpClient.getLogHistory().get(4));
             evalClientCommand(sftpClient, "done");
-            r6 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(5));
+            r6 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(5));
             testOutcome = (r1 && r2 && r3 && r4 && r5 && r6) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -640,15 +640,15 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
-            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "cdir /");
-            r4 = assertEquals("!Changed working dir to user1/", sftpClient.getServerResHistory().get(3));
+            r4 = assertEquals("!Changed working dir to user1/", sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "done");
-            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            r5 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -665,15 +665,15 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
-            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "cdir /folder1/folder2");
-            r4 = assertEquals("!Changed working dir to user1/folder1/folder2", sftpClient.getServerResHistory().get(3));
+            r4 = assertEquals("!Changed working dir to user1/folder1/folder2", sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "done");
-            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            r5 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -690,16 +690,16 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
-            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "cdir /folder1/folder2/folder3");
             r4 = assertEquals("-Cant connect to directory because: user1/folder1/folder2/folder3 does not exist", 
-                sftpClient.getServerResHistory().get(3));
+                sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "done");
-            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            r5 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -716,16 +716,16 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
-            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "cdir temp/data.csv");
             r4 = assertEquals("-Cant list directory because: user1/temp/data.csv is not a directory", 
-                sftpClient.getServerResHistory().get(3));
+                sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "done");
-            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            r5 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -742,18 +742,18 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5, r6;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user2");
-            r3 = assertEquals("+User-id valid, send account and password", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("+User-id valid, send account and password", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "cdir folder1");
-            r4 = assertEquals("+Directory exists, send account/password", sftpClient.getServerResHistory().get(3));
+            r4 = assertEquals("+Directory exists, send account/password", sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "acct acct1");
             r5 = assertEquals("!Account valid, logged-in\n!Changed working dir to user2/folder1", 
-                sftpClient.getServerResHistory().get(4));
+                sftpClient.getLogHistory().get(4));
             evalClientCommand(sftpClient, "done");
-            r6 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(5));
+            r6 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(5));
             testOutcome = (r1 && r2 && r3 && r4 && r5 && r6) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -770,18 +770,18 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5, r6;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user3");
-            r3 = assertEquals("+User-id valid, send account and password", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("+User-id valid, send account and password", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "cdir folder1");
-            r4 = assertEquals("+Directory exists, send account/password", sftpClient.getServerResHistory().get(3));
+            r4 = assertEquals("+Directory exists, send account/password", sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "pass pass3");
             r5 = assertEquals("!Logged in\n!Changed working dir to user3/folder1", 
-                sftpClient.getServerResHistory().get(4));
+                sftpClient.getLogHistory().get(4));
             evalClientCommand(sftpClient, "done");
-            r6 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(5));
+            r6 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(5));
             testOutcome = (r1 && r2 && r3 && r4 && r5 && r6) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -798,19 +798,19 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5, r6, r7;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user4");
-            r3 = assertEquals("+User-id valid, send account and password", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("+User-id valid, send account and password", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "cdir folder1");
-            r4 = assertEquals("+Directory exists, send account/password", sftpClient.getServerResHistory().get(3));
+            r4 = assertEquals("+Directory exists, send account/password", sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "acct acct1");
-            r5 = assertEquals("+Account valid, send password", sftpClient.getServerResHistory().get(4));
+            r5 = assertEquals("+Account valid, send password", sftpClient.getLogHistory().get(4));
             evalClientCommand(sftpClient, "pass pass4");
-            r6 = assertEquals("!Logged in\n!Changed working dir to user4/folder1", sftpClient.getServerResHistory().get(5));
+            r6 = assertEquals("!Logged in\n!Changed working dir to user4/folder1", sftpClient.getLogHistory().get(5));
             evalClientCommand(sftpClient, "done");
-            r7 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(6));
+            r7 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(6));
             testOutcome = (r1 && r2 && r3 && r4 && r5 && r6 && r7) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -827,16 +827,16 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
-            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "cdir folder1 folder2");
             r4 = assertEquals("ERROR: Invalid Arguments\nUsage: CDIR new-directory",
-                    sftpClient.getServerResHistory().get(3));
+                    sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "done");
-            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            r5 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -853,15 +853,15 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
-            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "kill delete.txt");
-            r4 = assertEquals("+user1/delete.txt deleted", sftpClient.getServerResHistory().get(3));
+            r4 = assertEquals("+user1/delete.txt deleted", sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "done");
-            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            r5 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -878,16 +878,16 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
-            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "kill fake.txt");
             r4 = assertEquals("-Not deleted because user1/fake.txt does not exist", 
-                sftpClient.getServerResHistory().get(3));
+                sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "done");
-            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            r5 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -904,16 +904,16 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
-            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "kill fake.txt fake.txt");
             r4 = assertEquals("ERROR: Invalid Arguments\nUsage: KILL file-spec", 
-                sftpClient.getServerResHistory().get(3));
+                sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "done");
-            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            r5 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -930,20 +930,20 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5, r6, r7;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
-            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "name rename.txt");
-            r4 = assertEquals("+File exists", sftpClient.getServerResHistory().get(3));
+            r4 = assertEquals("+File exists", sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "tobe new.txt");
             r5 = assertEquals("+user1/rename.txt renamed to user1/new.txt", 
-                sftpClient.getServerResHistory().get(4));
+                sftpClient.getLogHistory().get(4));
             evalClientCommand(sftpClient, "kill new.txt");
-            r6 = assertEquals("+user1/new.txt deleted", sftpClient.getServerResHistory().get(5));
+            r6 = assertEquals("+user1/new.txt deleted", sftpClient.getLogHistory().get(5));
             evalClientCommand(sftpClient, "done");
-            r7 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(6));
+            r7 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(6));
             testOutcome = (r1 && r2 && r3 && r4 && r5 && r6 && r7) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -960,15 +960,15 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
-            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "name fake.txt");
-            r4 = assertEquals("-Can't find user1/fake.txt", sftpClient.getServerResHistory().get(3));
+            r4 = assertEquals("-Can't find user1/fake.txt", sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "done");
-            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            r5 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -985,18 +985,18 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5, r6;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
-            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "name file.txt");
-            r4 = assertEquals("+File exists", sftpClient.getServerResHistory().get(3));
+            r4 = assertEquals("+File exists", sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "tobe file2.txt");
             r5 = assertEquals("-File wasn't renamed because user1/file2.txt already exists", 
-                sftpClient.getServerResHistory().get(4));
+                sftpClient.getLogHistory().get(4));
             evalClientCommand(sftpClient, "done");
-            r6 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(5));
+            r6 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(5));
             testOutcome = (r1 && r2 && r3 && r4 && r5 && r6) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -1013,21 +1013,21 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5, r6, r7;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
-            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "name fake.txt fake.txt");
             r4 = assertEquals("ERROR: Invalid Arguments\nUsage: NAME old-file-spec", 
-                sftpClient.getServerResHistory().get(3));
+                sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "name file.txt");
-            r5 = assertEquals("+File exists", sftpClient.getServerResHistory().get(4));
+            r5 = assertEquals("+File exists", sftpClient.getLogHistory().get(4));
             evalClientCommand(sftpClient, "tobe new.txt new.txt");
             r6 = assertEquals("ERROR: Invalid Arguments\nUsage: TOBE new-file-spec", 
-                sftpClient.getServerResHistory().get(5));
+                sftpClient.getLogHistory().get(5));
             evalClientCommand(sftpClient, "done");
-            r7 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(6));
+            r7 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(6));
             testOutcome = (r1 && r2 && r3 && r4 && r5 && r6 && r7) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -1044,11 +1044,11 @@ final class TestRunner {
         boolean r1, r2, r3;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "done");
-            r3 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(2));
             testOutcome = (r1 && r2 && r3) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -1065,13 +1065,13 @@ final class TestRunner {
         boolean r1, r2, r3, r4;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "done done");
-            r3 = assertEquals("ERROR: Invalid Arguments\nUsage: DONE", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("ERROR: Invalid Arguments\nUsage: DONE", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "done");
-            r4 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(3));
+            r4 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(3));
             testOutcome = (r1 && r2 && r3 && r4) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -1088,18 +1088,18 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5, r6;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
-            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "retr temp/data.csv");
-            r4 = assertContains("bytes will be sent", sftpClient.getServerResHistory().get(3));
+            r4 = assertContains("bytes will be sent", sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "send");
             // the actual data in temp/data.csv is a string that says "+File sent"
-            r5 = assertEquals("+File sent", sftpClient.getServerResHistory().get(4));
+            r5 = assertEquals("+File sent", sftpClient.getLogHistory().get(4));
             evalClientCommand(sftpClient, "done");
-            r6 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(5));
+            r6 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(5));
             testOutcome = (r1 && r2 && r3 && r4 && r5 && r6) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -1116,17 +1116,17 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5, r6;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
-            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "retr temp/data.csv");
-            r4 = assertContains("bytes will be sent", sftpClient.getServerResHistory().get(3));
+            r4 = assertContains("bytes will be sent", sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "stop");
-            r5 = assertEquals("+File will not be sent", sftpClient.getServerResHistory().get(4));
+            r5 = assertEquals("+File will not be sent", sftpClient.getLogHistory().get(4));
             evalClientCommand(sftpClient, "done");
-            r6 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(5));
+            r6 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(5));
             testOutcome = (r1 && r2 && r3 && r4 && r5 && r6) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -1143,15 +1143,15 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
-            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "retr fake.txt");
-            r4 = assertEquals("-File doesn't exist", sftpClient.getServerResHistory().get(3));
+            r4 = assertEquals("-File doesn't exist", sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "done");
-            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            r5 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -1168,15 +1168,15 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
-            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "retr temp");
-            r4 = assertEquals("-Specifier is not a file", sftpClient.getServerResHistory().get(3));
+            r4 = assertEquals("-Specifier is not a file", sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "done");
-            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            r5 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
@@ -1193,21 +1193,21 @@ final class TestRunner {
         boolean r1, r2, r3, r4, r5, r6, r7, r8;
         TestOutcome testOutcome;
 
-        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
-            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
             evalClientCommand(sftpClient, "retr file.txt file.txt");
-            r4 = assertEquals("ERROR: Invalid Arguments\nUsage: RETR file-spec", sftpClient.getServerResHistory().get(3));
+            r4 = assertEquals("ERROR: Invalid Arguments\nUsage: RETR file-spec", sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "retr file.txt");
-            r5 = assertContains("bytes will be sent", sftpClient.getServerResHistory().get(4));
+            r5 = assertContains("bytes will be sent", sftpClient.getLogHistory().get(4));
             evalClientCommand(sftpClient, "send send");
-            r6 = assertEquals("ERROR: Invalid Arguments\nUsage: SEND", sftpClient.getServerResHistory().get(5));
+            r6 = assertEquals("ERROR: Invalid Arguments\nUsage: SEND", sftpClient.getLogHistory().get(5));
             evalClientCommand(sftpClient, "stop stop");
-            r7 = assertEquals("ERROR: Invalid Arguments\nUsage: STOP", sftpClient.getServerResHistory().get(6));
+            r7 = assertEquals("ERROR: Invalid Arguments\nUsage: STOP", sftpClient.getLogHistory().get(6));
             evalClientCommand(sftpClient, "done");
-            r8 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(7));
+            r8 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(7));
             testOutcome = (r1 && r2 && r3 && r4 && r5 && r6 && r7 && r8) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
