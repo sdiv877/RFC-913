@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.ArrayList;
 
 import client.SFTPClient;
+import server.FileSystem;
 import utils.Utils;
 
 final class TestRunner {
@@ -15,6 +16,7 @@ final class TestRunner {
     private static List<TestOutcome> testResults = new ArrayList<TestOutcome>();
 
     public static void main(String[] argv) throws Exception {
+        initTestFiles();
         System.out.println("| RUNNING CLIENT TESTS |\n");
 
         testResults.add(test_User_id_valid());
@@ -45,10 +47,17 @@ final class TestRunner {
         testResults.add(test_Change_directory_password_required());
         testResults.add(test_Change_directory_account_and_password_required());
         testResults.add(test_Change_directory_argument_error());
+        testResults.add(test_Delete_file());
+        testResults.add(test_Delete_non_existent_file());
+        testResults.add(test_Delete_argument_error());
 
         System.out.println("| CLIENT TESTS COMPLETED |");
         printTestResults();
         Utils.waitForEnterKey();
+    }
+
+    private static void initTestFiles() {
+        FileSystem.writeFile("user1/delete.txt", "");
     }
 
     private static boolean assertEquals(String expected, String actual) {
@@ -810,6 +819,83 @@ final class TestRunner {
             evalClientCommand(sftpClient, "cdir folder1 folder2");
             r4 = assertEquals("ERROR: Invalid Arguments\nUsage: CDIR new-directory",
                     sftpClient.getServerResHistory().get(3));
+            evalClientCommand(sftpClient, "done");
+            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
+        } catch (Exception e) {
+            e.printStackTrace();
+            testOutcome = TestOutcome.Exception;
+        }
+
+        System.out.println();
+        return testOutcome;
+    }
+
+    private static TestOutcome test_Delete_file() {
+        System.out.println("29. Delete file");
+        SFTPClient sftpClient = new SFTPClient();
+        boolean r1, r2, r3, r4, r5;
+        TestOutcome testOutcome;
+
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        try {
+            evalClientCommand(sftpClient, "user user1");
+            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            evalClientCommand(sftpClient, "kill delete.txt");
+            r4 = assertEquals("+user1/delete.txt deleted", sftpClient.getServerResHistory().get(3));
+            evalClientCommand(sftpClient, "done");
+            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
+        } catch (Exception e) {
+            e.printStackTrace();
+            testOutcome = TestOutcome.Exception;
+        }
+
+        System.out.println();
+        return testOutcome;
+    }
+
+    private static TestOutcome test_Delete_non_existent_file() {
+        System.out.println("30. Delete non-existent file");
+        SFTPClient sftpClient = new SFTPClient();
+        boolean r1, r2, r3, r4, r5;
+        TestOutcome testOutcome;
+
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        try {
+            evalClientCommand(sftpClient, "user user1");
+            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            evalClientCommand(sftpClient, "kill fake.txt");
+            r4 = assertEquals("-Not deleted because user1/fake.txt does not exist", 
+                sftpClient.getServerResHistory().get(3));
+            evalClientCommand(sftpClient, "done");
+            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
+        } catch (Exception e) {
+            e.printStackTrace();
+            testOutcome = TestOutcome.Exception;
+        }
+
+        System.out.println();
+        return testOutcome;
+    }
+
+    private static TestOutcome test_Delete_argument_error() {
+        System.out.println("31. Delete, argument error");
+        SFTPClient sftpClient = new SFTPClient();
+        boolean r1, r2, r3, r4, r5;
+        TestOutcome testOutcome;
+
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        try {
+            evalClientCommand(sftpClient, "user user1");
+            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            evalClientCommand(sftpClient, "kill fake.txt fake.txt");
+            r4 = assertEquals("ERROR: Invalid Arguments\nUsage: KILL file-spec", 
+                sftpClient.getServerResHistory().get(3));
             evalClientCommand(sftpClient, "done");
             r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;

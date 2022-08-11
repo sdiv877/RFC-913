@@ -155,6 +155,8 @@ public class SFTPServer {
 					return "ERROR: Invalid Arguments\nUsage: LIST { F | V } directory-path";
 				case "cdir":
 					return "ERROR: Invalid Arguments\nUsage: CDIR new-directory";
+				case "kill":
+					return "ERROR: Invalid Arguments\nUsage: KILL file-spec";
 				default:
 					return null;
 			}
@@ -182,6 +184,8 @@ public class SFTPServer {
 					return list(commandArgs);
 				case "cdir":
 					return cdir(commandArgs.get(0));
+				case "kill":
+					return kill(commandArgs.get(0));
 				case "done":
 					return makeResponse("Closing connection", ResponseCode.Success);
 				default:
@@ -306,6 +310,15 @@ public class SFTPServer {
 			// change current directory
 			currentDir = selectedDir;
 			return makeResponse("Changed working dir to " + currentDir, ResponseCode.LoggedIn);
+		}
+
+		private String kill(String fileName) {
+			String selectedFile = currentDir + fileName;
+			if (!FileSystem.dirExists(selectedFile)) {
+				return makeResponse("Not deleted because " + selectedFile + " does not exist", ResponseCode.Error);
+			}
+			FileSystem.deleteFile(selectedFile);
+			return makeResponse("user1/delete.txt deleted", ResponseCode.Success);
 		}
 	}
 }

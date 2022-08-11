@@ -76,6 +76,21 @@ public final class FileSystem {
         return dirListBuilder.toString();
     }
 
+    public static void writeFile(String relativeFilePath, String data) {
+        try {
+            Path filePath = Paths.get(HOME_DIR + relativeFilePath);
+            Files.write(filePath, data.getBytes());
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(0);
+        }
+    }
+
+    public static boolean deleteFile(String relativeFilePath) {
+        Path filePath = Paths.get(HOME_DIR + relativeFilePath);
+        return filePath.toFile().delete();
+    }
+
     private static List<User> readUsers() {
         List<String> userData = new ArrayList<String>();
         List<User> users = new ArrayList<User>();

@@ -35,7 +35,6 @@ public final class Utils {
 			switch (s.charAt(i)){
 				case '\n': sb.append("\\n"); break;
 				case '\0': sb.append("\\0"); break;
-				// ... rest of escape characters
 				default: sb.append(s.charAt(i));
 			}
 		return sb.toString();
