@@ -3,6 +3,7 @@ package server;
 import java.io.*;
 import java.net.*;
 import java.util.List;
+import java.util.Arrays;
 import java.util.ArrayList;
 
 import utils.Utils;
@@ -11,6 +12,8 @@ public class SFTPServer {
 	private static final String HOSTNAME = "localhost";
 	private static final int PORT = 6789;
 	private static final String SERVER_PROTOCOL = "RFC 913 SFTP";
+	private static final List<String> zeroArgCmds = Arrays.asList("done", "send", "stop");
+	private static final List<String> twoArgCmds = Arrays.asList("list");
 
 	ServerSocket welcomeSocket;
 	private int numActiveClients;
@@ -74,6 +77,7 @@ public class SFTPServer {
 		private String currentDir;
 		private String pendingDirChange;
 		private String pendingFileToRename;
+		private String pendingFileToRetrieve;
 
 		public SFTPClientWorker(Socket clientSocket) {
 			this.id = ++numAttemptedClients;
@@ -140,12 +144,12 @@ public class SFTPServer {
 		}
 
 		private String validateArgs(String commandName, List<String> commandArgs) {
-			boolean listOutOfBounds = (commandName.equals("list") && commandArgs.size() > 2);
-			boolean doneOutOfBounds = (commandName.equals("done") && commandArgs.size() > 0);
-			boolean remainingOutOfBounds = (!commandName.equals("list") &&
-					!commandName.equals("done") && commandArgs.size() > 1);
+			boolean twoArgCmdsOutOfBounds = (twoArgCmds.contains(commandName) && commandArgs.size() > 2);
+			boolean zeroArgCmdsOutOfBounds = (zeroArgCmds.contains(commandName) && commandArgs.size() > 0);
+			boolean remainingCmdsOutOfBounds = (!twoArgCmds.contains(commandName) && !zeroArgCmds.contains(commandName)
+					&& commandArgs.size() > 1);
 
-			if (!listOutOfBounds && !doneOutOfBounds && !remainingOutOfBounds) return null;
+			if (!twoArgCmdsOutOfBounds && !zeroArgCmdsOutOfBounds && !remainingCmdsOutOfBounds) return null;
 	
 			switch (commandName) {
 				case "user":
@@ -168,6 +172,12 @@ public class SFTPServer {
 					return "ERROR: Invalid Arguments\nUsage: TOBE new-file-spec";
 				case "done":
 					return "ERROR: Invalid Arguments\nUsage: DONE";
+				case "retr":
+					return "ERROR: Invalid Arguments\nUsage: RETR file-spec";
+				case "send":
+					return "ERROR: Invalid Arguments\nUsage: SEND";
+				case "stop":
+					return "ERROR: Invalid Arguments\nUsage: STOP";
 				default:
 					return null;
 			}
@@ -203,6 +213,12 @@ public class SFTPServer {
 					return tobe(commandArgs.get(0));
 				case "done":
 					return done();
+				case "retr":
+					return retr(commandArgs.get(0));
+				case "send":
+					return send();
+				case "stop":
+					return stop();
 				default:
 					return makeResponse("Could not call command", ResponseCode.Error);
 			}
@@ -356,6 +372,28 @@ public class SFTPServer {
 
 		private String done() {
 			return makeResponse("Closing connection", ResponseCode.Success);
+		}
+
+		private String retr(String fileName) {
+			String selectedFile = currentDir + fileName;
+			if (!FileSystem.pathExists(selectedFile)) {
+				return makeResponse("File doesn't exist", ResponseCode.Error);
+			} else if (FileSystem.pathIsDirectory(selectedFile)) {
+				return makeResponse("Specifier is not a file", ResponseCode.Error);
+			}
+			pendingFileToRetrieve = selectedFile;
+			return makeResponse(FileSystem.getFileSize(selectedFile) + " bytes will be sent", ResponseCode.Success);
+		}
+
+		private String send() {
+			String dataToSend = FileSystem.readFile(pendingFileToRetrieve);
+			pendingFileToRetrieve = null;
+			return makeResponse(dataToSend, ResponseCode.None);
+		}
+
+		private String stop() {
+			pendingFileToRetrieve = null;
+			return makeResponse("File will not be sent", ResponseCode.Success);
 		}
 	}
 }

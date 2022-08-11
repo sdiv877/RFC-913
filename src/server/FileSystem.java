@@ -39,9 +39,13 @@ public final class FileSystem {
         return Files.exists(dir);
     }
 
-    public static boolean pathIsFile(String relativePath) {
+    public static boolean pathIsDirectory(String relativePath) {
         Path filePath = Paths.get(HOME_DIR + relativePath);
-        return !Files.isDirectory(filePath);
+        return Files.isDirectory(filePath);
+    }
+
+    public static boolean pathIsFile(String relativePath) {
+        return !pathIsDirectory(relativePath);
     }
 
     public static String readDir(String relativePath) {
@@ -82,7 +86,16 @@ public final class FileSystem {
             Files.write(filePath, data.getBytes());
         } catch (Exception e) {
             e.printStackTrace();
-            System.exit(0);
+        }
+    }
+
+    public static String readFile(String relativeFilePath) {
+        try {
+            Path filePath = Paths.get(HOME_DIR + relativeFilePath);
+            return Files.readString(filePath);
+        } catch(Exception e) {
+            e.printStackTrace();
+            return "";
         }
     }
 
@@ -95,6 +108,11 @@ public final class FileSystem {
     public static boolean deleteFile(String relativeFilePath) {
         Path filePath = Paths.get(HOME_DIR + relativeFilePath);
         return filePath.toFile().delete();
+    }
+
+    public static long getFileSize(String relativeFilePath) {
+        File file = Paths.get(HOME_DIR + relativeFilePath).toFile();
+        return file.length();
     }
 
     private static List<User> readUsers() {

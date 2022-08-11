@@ -56,6 +56,11 @@ final class TestRunner {
         testResults.add(test_Rename_argument_error());
         testResults.add(test_Done());
         testResults.add(test_Done_argument_error());
+        testResults.add(test_Retrieve());
+        testResults.add(test_Retrieve_stop_sending());
+        testResults.add(test_Retrieve_non_existent_file());
+        testResults.add(test_Retrieve_directory_instead_of_file());
+        testResults.add(test_Retrieve_argument_error());
 
         System.out.println("| CLIENT TESTS COMPLETED |");
         printTestResults();
@@ -69,6 +74,10 @@ final class TestRunner {
 
     private static boolean assertEquals(String expected, String actual) {
         return actual.equals(expected);
+    }
+
+    private static boolean assertContains(String expected, String actual) {
+        return actual.contains(expected);
     }
 
     private static boolean assertContainsAll(List<String> expectedList, String actual, String regex) {
@@ -1064,6 +1073,142 @@ final class TestRunner {
             evalClientCommand(sftpClient, "done");
             r4 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(3));
             testOutcome = (r1 && r2 && r3 && r4) ? TestOutcome.Success : TestOutcome.Failure;
+        } catch (Exception e) {
+            e.printStackTrace();
+            testOutcome = TestOutcome.Exception;
+        }
+
+        System.out.println();
+        return testOutcome;
+    }
+
+    private static TestOutcome test_Retrieve() {
+        System.out.println("38. Retrieve");
+        SFTPClient sftpClient = new SFTPClient();
+        boolean r1, r2, r3, r4, r5, r6;
+        TestOutcome testOutcome;
+
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        try {
+            evalClientCommand(sftpClient, "user user1");
+            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            evalClientCommand(sftpClient, "retr temp/data.csv");
+            r4 = assertContains("bytes will be sent", sftpClient.getServerResHistory().get(3));
+            evalClientCommand(sftpClient, "send");
+            // the actual data in temp/data.csv is a string that says "+File sent"
+            r5 = assertEquals("+File sent", sftpClient.getServerResHistory().get(4));
+            evalClientCommand(sftpClient, "done");
+            r6 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(5));
+            testOutcome = (r1 && r2 && r3 && r4 && r5 && r6) ? TestOutcome.Success : TestOutcome.Failure;
+        } catch (Exception e) {
+            e.printStackTrace();
+            testOutcome = TestOutcome.Exception;
+        }
+
+        System.out.println();
+        return testOutcome;
+    }
+
+    private static TestOutcome test_Retrieve_stop_sending() {
+        System.out.println("39. Retrieve, stop sending");
+        SFTPClient sftpClient = new SFTPClient();
+        boolean r1, r2, r3, r4, r5, r6;
+        TestOutcome testOutcome;
+
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        try {
+            evalClientCommand(sftpClient, "user user1");
+            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            evalClientCommand(sftpClient, "retr temp/data.csv");
+            r4 = assertContains("bytes will be sent", sftpClient.getServerResHistory().get(3));
+            evalClientCommand(sftpClient, "stop");
+            r5 = assertEquals("+File will not be sent", sftpClient.getServerResHistory().get(4));
+            evalClientCommand(sftpClient, "done");
+            r6 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(5));
+            testOutcome = (r1 && r2 && r3 && r4 && r5 && r6) ? TestOutcome.Success : TestOutcome.Failure;
+        } catch (Exception e) {
+            e.printStackTrace();
+            testOutcome = TestOutcome.Exception;
+        }
+
+        System.out.println();
+        return testOutcome;
+    }
+
+    private static TestOutcome test_Retrieve_non_existent_file() {
+        System.out.println("40. Retrieve non-existent file");
+        SFTPClient sftpClient = new SFTPClient();
+        boolean r1, r2, r3, r4, r5;
+        TestOutcome testOutcome;
+
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        try {
+            evalClientCommand(sftpClient, "user user1");
+            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            evalClientCommand(sftpClient, "retr fake.txt");
+            r4 = assertEquals("-File doesn't exist", sftpClient.getServerResHistory().get(3));
+            evalClientCommand(sftpClient, "done");
+            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
+        } catch (Exception e) {
+            e.printStackTrace();
+            testOutcome = TestOutcome.Exception;
+        }
+
+        System.out.println();
+        return testOutcome;
+    }
+
+    private static TestOutcome test_Retrieve_directory_instead_of_file() {
+        System.out.println("41. Retrieve directory instead of file");
+        SFTPClient sftpClient = new SFTPClient();
+        boolean r1, r2, r3, r4, r5;
+        TestOutcome testOutcome;
+
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        try {
+            evalClientCommand(sftpClient, "user user1");
+            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            evalClientCommand(sftpClient, "retr temp");
+            r4 = assertEquals("-Specifier is not a file", sftpClient.getServerResHistory().get(3));
+            evalClientCommand(sftpClient, "done");
+            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
+        } catch (Exception e) {
+            e.printStackTrace();
+            testOutcome = TestOutcome.Exception;
+        }
+
+        System.out.println();
+        return testOutcome;
+    }
+
+    private static TestOutcome test_Retrieve_argument_error() {
+        System.out.println("42. Retrieve, argument error");
+        SFTPClient sftpClient = new SFTPClient();
+        boolean r1, r2, r3, r4, r5, r6, r7, r8;
+        TestOutcome testOutcome;
+
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        try {
+            evalClientCommand(sftpClient, "user user1");
+            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            evalClientCommand(sftpClient, "retr file.txt file.txt");
+            r4 = assertEquals("ERROR: Invalid Arguments\nUsage: RETR file-spec", sftpClient.getServerResHistory().get(3));
+            evalClientCommand(sftpClient, "retr file.txt");
+            r5 = assertContains("bytes will be sent", sftpClient.getServerResHistory().get(4));
+            evalClientCommand(sftpClient, "send send");
+            r6 = assertEquals("ERROR: Invalid Arguments\nUsage: SEND", sftpClient.getServerResHistory().get(5));
+            evalClientCommand(sftpClient, "stop stop");
+            r7 = assertEquals("ERROR: Invalid Arguments\nUsage: STOP", sftpClient.getServerResHistory().get(6));
+            evalClientCommand(sftpClient, "done");
+            r8 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(7));
+            testOutcome = (r1 && r2 && r3 && r4 && r5 && r6 && r7 && r8) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
             testOutcome = TestOutcome.Exception;
