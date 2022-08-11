@@ -71,6 +71,8 @@ public class SFTPServer {
 				return "ERROR: Invalid Arguments\nUsage: TYPE { A | B | C }";
 			case "list":
 				return "ERROR: Invalid Arguments\nUsage: LIST { F | V } directory-path";
+			case "cdir":
+				return "ERROR: Invalid Arguments\nUsage: CDIR new-directory";
             default:
                 return null;
         }
@@ -86,14 +88,18 @@ public class SFTPServer {
 	}
 
     private static String makeResponse(String msg, ResponseCode responseCode) {
-		return responseCode.toString() + msg + '\0';
+		return makeResponseString(msg, responseCode) + '\0';
     }
+
+	private static String makeResponseString(String msg, ResponseCode responseCode) {
+		return responseCode.toString() + msg;
+	}
 
 	private static void logMessage(String msg) {
 		System.out.println(msg);
 	}
 
-	private class SFTPClientWorker implements Runnable {
+	public class SFTPClientWorker implements Runnable {
 		private int id;
 		private Socket clientSocket;
 		private BufferedReader inFromClient;
@@ -102,6 +108,7 @@ public class SFTPServer {
 		private boolean isLoggedIn;
 		private String selectedAccount;
 		private String currentDir;
+		private String pendingDirChange;
 
 		public SFTPClientWorker(Socket clientSocket) {
 			init(clientSocket);
@@ -143,6 +150,26 @@ public class SFTPServer {
 			return this.id;
 		}
 
+		public User getSelectedUser() {
+			return this.selectedUser;
+		}
+
+		public String getCurrentDir() {
+			return this.currentDir;
+		}
+
+		public void setCurrentDir(String dir) {
+			this.currentDir = dir;
+		}
+
+		public void setPendingDirChange(String dir) {
+			this.pendingDirChange = dir;
+		}
+
+		public boolean isLoggedIn() {
+			return this.isLoggedIn;
+		}
+
 		public boolean isClosed() {
 			return clientSocket.isClosed();
 		}
@@ -169,11 +196,11 @@ public class SFTPServer {
 				case "user":
 					selectedUser = getUser(commandArgs.get(0));
 					if (selectedUser != null) {
+						currentDir = selectedUser.getRootDir();
 						if (selectedUser.requiresAccount() || selectedUser.requiresPassword()) {
 							return makeResponse("User-id valid, send account and password", ResponseCode.Success);
 						} else {
 							isLoggedIn = true;
-							currentDir = selectedUser.getRootDir();
 							return makeResponse(selectedUser.getId() + " logged in", ResponseCode.LoggedIn);
 						}
 					} else {
@@ -182,12 +209,19 @@ public class SFTPServer {
 				case "acct":
 					if (selectedUser.containsAccount(commandArgs.get(0))) {
 						selectedAccount = commandArgs.get(0);
+						currentDir = selectedUser.getRootDir();
 						if (selectedUser.requiresPassword() && !isLoggedIn) {
 							return makeResponse("Account valid, send password", ResponseCode.Success);
 						} else {
 							isLoggedIn = true;
-							currentDir = selectedUser.getRootDir();
-							return makeResponse("Account valid, logged-in", ResponseCode.LoggedIn);
+							if (pendingDirChange != null) {
+								String loginResponse = makeResponseString("Account valid, logged-in\n", ResponseCode.LoggedIn);
+								loginResponse += SFTPCommands.cdir(this, pendingDirChange);
+								pendingDirChange = null;
+								return loginResponse;
+							} else {
+								return makeResponse("Account valid, logged-in", ResponseCode.LoggedIn);
+							}
 						}
 					} else {
 						selectedAccount = null;
@@ -199,8 +233,15 @@ public class SFTPServer {
 						if (selectedUser.requiresAccount() && selectedAccount == null) {
 							return makeResponse("Send account", ResponseCode.Success);
 						} else {
-							currentDir = selectedUser.getRootDir();
-							return makeResponse("Logged in", ResponseCode.LoggedIn);
+							if (pendingDirChange != null) {
+								String loginResponse = makeResponseString("Logged in\n", ResponseCode.LoggedIn);
+								loginResponse += SFTPCommands.cdir(this, pendingDirChange);
+								pendingDirChange = null;
+								return loginResponse;
+							} else {
+								currentDir = selectedUser.getRootDir();
+								return makeResponse("Logged in", ResponseCode.LoggedIn);
+							}
 						}
 					} else {
 						return makeResponse("Wrong password, try again", ResponseCode.Error);
@@ -235,23 +276,7 @@ public class SFTPServer {
 							return makeResponse("Argument error", ResponseCode.Error);
 					}
 				case "cdir":
-					String selectedCDir;
-					if (commandArgs.get(0).equals("/")) {
-						selectedCDir = selectedUser.getRootDir();
-					} else if (commandArgs.get(0).startsWith("/")) {
-						// user.getId() represents user.getRootDir() without the ending "/"
-						selectedCDir = selectedUser.getId() + commandArgs.get(0);
-					} else {
-						selectedCDir = Utils.appendIfMissing(currentDir, "/");
-						selectedCDir += commandArgs.get(0);
-					}
-					if (!FileSystem.dirExists(selectedCDir)) {
-						return makeResponse("Cant connect to directory because: " + selectedCDir  + " does not exist", ResponseCode.Error);
-					} else if (FileSystem.pathIsFile(selectedCDir)) {
-						return makeResponse("Cant list directory because: " + selectedCDir  + " is not a directory", ResponseCode.Error);
-					}
-					currentDir = selectedCDir;
-					return makeResponse("Changed working dir to " + currentDir, ResponseCode.LoggedIn);
+					return SFTPCommands.cdir(this, commandArgs.get(0));
 				case "done":
 					return makeResponse("Closing connection", ResponseCode.Success);
 				default:

@@ -41,6 +41,10 @@ final class TestRunner {
         testResults.add(test_Change_directory_absolute_path());
         testResults.add(test_Change_directory_non_existent_directory());
         testResults.add(test_Change_directory_file_instead_of_directory());
+        testResults.add(test_Change_directory_account_required());
+        testResults.add(test_Change_directory_password_required());
+        testResults.add(test_Change_directory_account_and_password_required());
+        testResults.add(test_Change_directory_argument_error());
 
         System.out.println("| CLIENT TESTS COMPLETED |");
         printTestResults();
@@ -695,6 +699,117 @@ final class TestRunner {
             evalClientCommand(sftpClient, "cdir temp/data.csv");
             r4 = assertEquals("-Cant list directory because: user1/temp/data.csv is not a directory", 
                 sftpClient.getServerResHistory().get(3));
+            evalClientCommand(sftpClient, "done");
+            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
+        } catch (Exception e) {
+            e.printStackTrace();
+            testOutcome = TestOutcome.Exception;
+        }
+
+        System.out.println();
+        return testOutcome;
+    }
+
+    private static TestOutcome test_Change_directory_account_required() {
+        System.out.println("25. Change directory, account required");
+        SFTPClient sftpClient = new SFTPClient();
+        boolean r1, r2, r3, r4, r5, r6;
+        TestOutcome testOutcome;
+
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        try {
+            evalClientCommand(sftpClient, "user user2");
+            r3 = assertEquals("+User-id valid, send account and password", sftpClient.getServerResHistory().get(2));
+            evalClientCommand(sftpClient, "cdir folder1");
+            r4 = assertEquals("+Directory exists, send account/password", sftpClient.getServerResHistory().get(3));
+            evalClientCommand(sftpClient, "acct acct1");
+            r5 = assertEquals("!Account valid, logged-in\n!Changed working dir to user2/folder1", 
+                sftpClient.getServerResHistory().get(4));
+            evalClientCommand(sftpClient, "done");
+            r6 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(5));
+            testOutcome = (r1 && r2 && r3 && r4 && r5 && r6) ? TestOutcome.Success : TestOutcome.Failure;
+        } catch (Exception e) {
+            e.printStackTrace();
+            testOutcome = TestOutcome.Exception;
+        }
+
+        System.out.println();
+        return testOutcome;
+    }
+
+    private static TestOutcome test_Change_directory_password_required() {
+        System.out.println("26. Change directory, password required");
+        SFTPClient sftpClient = new SFTPClient();
+        boolean r1, r2, r3, r4, r5, r6;
+        TestOutcome testOutcome;
+
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        try {
+            evalClientCommand(sftpClient, "user user3");
+            r3 = assertEquals("+User-id valid, send account and password", sftpClient.getServerResHistory().get(2));
+            evalClientCommand(sftpClient, "cdir folder1");
+            r4 = assertEquals("+Directory exists, send account/password", sftpClient.getServerResHistory().get(3));
+            evalClientCommand(sftpClient, "pass pass3");
+            r5 = assertEquals("!Logged in\n!Changed working dir to user3/folder1", 
+                sftpClient.getServerResHistory().get(4));
+            evalClientCommand(sftpClient, "done");
+            r6 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(5));
+            testOutcome = (r1 && r2 && r3 && r4 && r5 && r6) ? TestOutcome.Success : TestOutcome.Failure;
+        } catch (Exception e) {
+            e.printStackTrace();
+            testOutcome = TestOutcome.Exception;
+        }
+
+        System.out.println();
+        return testOutcome;
+    }
+
+    private static TestOutcome test_Change_directory_account_and_password_required() {
+        System.out.println("27. Change directory, account and password required");
+        SFTPClient sftpClient = new SFTPClient();
+        boolean r1, r2, r3, r4, r5, r6, r7;
+        TestOutcome testOutcome;
+
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        try {
+            evalClientCommand(sftpClient, "user user4");
+            r3 = assertEquals("+User-id valid, send account and password", sftpClient.getServerResHistory().get(2));
+            evalClientCommand(sftpClient, "cdir folder1");
+            r4 = assertEquals("+Directory exists, send account/password", sftpClient.getServerResHistory().get(3));
+            evalClientCommand(sftpClient, "acct acct1");
+            r5 = assertEquals("+Account valid, send password", sftpClient.getServerResHistory().get(4));
+            evalClientCommand(sftpClient, "pass pass4");
+            r6 = assertEquals("!Logged in\n!Changed working dir to user4/folder1", sftpClient.getServerResHistory().get(5));
+            evalClientCommand(sftpClient, "done");
+            r7 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(6));
+            testOutcome = (r1 && r2 && r3 && r4 && r5 && r6 && r7) ? TestOutcome.Success : TestOutcome.Failure;
+        } catch (Exception e) {
+            e.printStackTrace();
+            testOutcome = TestOutcome.Exception;
+        }
+
+        System.out.println();
+        return testOutcome;
+    }
+
+    private static TestOutcome test_Change_directory_argument_error() {
+        System.out.println("28. Change directory, argument error");
+        SFTPClient sftpClient = new SFTPClient();
+        boolean r1, r2, r3, r4, r5;
+        TestOutcome testOutcome;
+
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        try {
+            evalClientCommand(sftpClient, "user user1");
+            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            evalClientCommand(sftpClient, "cdir folder1 folder2");
+            r4 = assertEquals("ERROR: Invalid Arguments\nUsage: CDIR new-directory",
+                    sftpClient.getServerResHistory().get(3));
             evalClientCommand(sftpClient, "done");
             r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;

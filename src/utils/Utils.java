@@ -4,7 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
 
-public class Utils {
+public final class Utils {
+    private Utils() {
+        throw new IllegalAccessError("utils.Utils cannot be instantiated");
+    }
+
     public static ArrayList<String> splitString(String s, String regex) {
         ArrayList<String> splitUpString = new ArrayList<String>();
         Collections.addAll(splitUpString, s.split(regex));
@@ -24,6 +28,18 @@ public class Utils {
         }
         return s;
     }
+
+    public static String unEscapeString(String s){
+		StringBuilder sb = new StringBuilder();
+		for (int i=0; i<s.length(); i++)
+			switch (s.charAt(i)){
+				case '\n': sb.append("\\n"); break;
+				case '\0': sb.append("\\0"); break;
+				// ... rest of escape characters
+				default: sb.append(s.charAt(i));
+			}
+		return sb.toString();
+	}
 
     public static void waitForEnterKey() {
         Scanner scan = new Scanner(System.in);
