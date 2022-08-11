@@ -50,6 +50,10 @@ final class TestRunner {
         testResults.add(test_Delete_file());
         testResults.add(test_Delete_non_existent_file());
         testResults.add(test_Delete_argument_error());
+        testResults.add(test_Rename());
+        testResults.add(test_Rename_non_existent_file());
+        testResults.add(test_Rename_file_already_exists());
+        testResults.add(test_Rename_argument_error());
 
         System.out.println("| CLIENT TESTS COMPLETED |");
         printTestResults();
@@ -58,6 +62,7 @@ final class TestRunner {
 
     private static void initTestFiles() {
         FileSystem.writeFile("user1/delete.txt", "");
+        FileSystem.writeFile("user1/rename.txt", "");
     }
 
     private static boolean assertEquals(String expected, String actual) {
@@ -899,6 +904,120 @@ final class TestRunner {
             evalClientCommand(sftpClient, "done");
             r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
             testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
+        } catch (Exception e) {
+            e.printStackTrace();
+            testOutcome = TestOutcome.Exception;
+        }
+
+        System.out.println();
+        return testOutcome;
+    }
+
+    private static TestOutcome test_Rename() {
+        System.out.println("32. Rename");
+        SFTPClient sftpClient = new SFTPClient();
+        boolean r1, r2, r3, r4, r5, r6, r7;
+        TestOutcome testOutcome;
+
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        try {
+            evalClientCommand(sftpClient, "user user1");
+            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            evalClientCommand(sftpClient, "name rename.txt");
+            r4 = assertEquals("+File exists", sftpClient.getServerResHistory().get(3));
+            evalClientCommand(sftpClient, "tobe new.txt");
+            r5 = assertEquals("+user1/rename.txt renamed to user1/new.txt", 
+                sftpClient.getServerResHistory().get(4));
+            evalClientCommand(sftpClient, "kill new.txt");
+            r6 = assertEquals("+user1/new.txt deleted", sftpClient.getServerResHistory().get(5));
+            evalClientCommand(sftpClient, "done");
+            r7 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(6));
+            testOutcome = (r1 && r2 && r3 && r4 && r5 && r6 && r7) ? TestOutcome.Success : TestOutcome.Failure;
+        } catch (Exception e) {
+            e.printStackTrace();
+            testOutcome = TestOutcome.Exception;
+        }
+
+        System.out.println();
+        return testOutcome;
+    }
+
+    private static TestOutcome test_Rename_non_existent_file() {
+        System.out.println("33. Rename non-existent file");
+        SFTPClient sftpClient = new SFTPClient();
+        boolean r1, r2, r3, r4, r5;
+        TestOutcome testOutcome;
+
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        try {
+            evalClientCommand(sftpClient, "user user1");
+            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            evalClientCommand(sftpClient, "name fake.txt");
+            r4 = assertEquals("-Can't find user1/fake.txt", sftpClient.getServerResHistory().get(3));
+            evalClientCommand(sftpClient, "done");
+            r5 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(4));
+            testOutcome = (r1 && r2 && r3 && r4 && r5) ? TestOutcome.Success : TestOutcome.Failure;
+        } catch (Exception e) {
+            e.printStackTrace();
+            testOutcome = TestOutcome.Exception;
+        }
+
+        System.out.println();
+        return testOutcome;
+    }
+
+    private static TestOutcome test_Rename_file_already_exists() {
+        System.out.println("34. Rename, file already exists");
+        SFTPClient sftpClient = new SFTPClient();
+        boolean r1, r2, r3, r4, r5, r6;
+        TestOutcome testOutcome;
+
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        try {
+            evalClientCommand(sftpClient, "user user1");
+            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            evalClientCommand(sftpClient, "name file.txt");
+            r4 = assertEquals("+File exists", sftpClient.getServerResHistory().get(3));
+            evalClientCommand(sftpClient, "tobe file2.txt");
+            r5 = assertEquals("-File wasn't renamed because user1/file2.txt already exists", 
+                sftpClient.getServerResHistory().get(4));
+            evalClientCommand(sftpClient, "done");
+            r6 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(5));
+            testOutcome = (r1 && r2 && r3 && r4 && r5 && r6) ? TestOutcome.Success : TestOutcome.Failure;
+        } catch (Exception e) {
+            e.printStackTrace();
+            testOutcome = TestOutcome.Exception;
+        }
+
+        System.out.println();
+        return testOutcome;
+    }
+
+    private static TestOutcome test_Rename_argument_error() {
+        System.out.println("35. Rename, argument error");
+        SFTPClient sftpClient = new SFTPClient();
+        boolean r1, r2, r3, r4, r5, r6, r7;
+        TestOutcome testOutcome;
+
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        try {
+            evalClientCommand(sftpClient, "user user1");
+            r3 = assertEquals("!user1 logged in", sftpClient.getServerResHistory().get(2));
+            evalClientCommand(sftpClient, "name fake.txt fake.txt");
+            r4 = assertEquals("ERROR: Invalid Arguments\nUsage: NAME old-file-spec", 
+                sftpClient.getServerResHistory().get(3));
+            evalClientCommand(sftpClient, "name file.txt");
+            r5 = assertEquals("+File exists", sftpClient.getServerResHistory().get(4));
+            evalClientCommand(sftpClient, "tobe new.txt new.txt");
+            r6 = assertEquals("ERROR: Invalid Arguments\nUsage: TOBE new-file-spec", 
+                sftpClient.getServerResHistory().get(5));
+            evalClientCommand(sftpClient, "done");
+            r7 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(6));
+            testOutcome = (r1 && r2 && r3 && r4 && r5 && r6 && r7) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
             testOutcome = TestOutcome.Exception;

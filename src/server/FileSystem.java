@@ -34,7 +34,7 @@ public final class FileSystem {
         return null;
     }
 
-    public static boolean dirExists(String relativePath) {
+    public static boolean pathExists(String relativePath) {
         Path dir = Paths.get(HOME_DIR + relativePath);
         return Files.exists(dir);
     }
@@ -84,6 +84,12 @@ public final class FileSystem {
             e.printStackTrace();
             System.exit(0);
         }
+    }
+
+    public static void renameFile(String originalRelativeFilePath, String newRelativeFilePath) {
+        File originalFile = Paths.get(HOME_DIR + originalRelativeFilePath).toFile();
+        Path newFilePath = Paths.get(HOME_DIR + newRelativeFilePath);
+        originalFile.renameTo(newFilePath.toFile());
     }
 
     public static boolean deleteFile(String relativeFilePath) {

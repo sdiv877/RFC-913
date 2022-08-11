@@ -73,6 +73,7 @@ public class SFTPServer {
 		private String selectedAccount;
 		private String currentDir;
 		private String pendingDirChange;
+		private String pendingFileToRename;
 
 		public SFTPClientWorker(Socket clientSocket) {
 			this.id = ++numAttemptedClients;
@@ -157,6 +158,10 @@ public class SFTPServer {
 					return "ERROR: Invalid Arguments\nUsage: CDIR new-directory";
 				case "kill":
 					return "ERROR: Invalid Arguments\nUsage: KILL file-spec";
+				case "name":
+					return "ERROR: Invalid Arguments\nUsage: NAME old-file-spec";
+				case "tobe":
+					return "ERROR: Invalid Arguments\nUsage: TOBE new-file-spec";
 				default:
 					return null;
 			}
@@ -186,6 +191,10 @@ public class SFTPServer {
 					return cdir(commandArgs.get(0));
 				case "kill":
 					return kill(commandArgs.get(0));
+				case "name":
+					return name(commandArgs.get(0));
+				case "tobe":
+					return tobe(commandArgs.get(0));
 				case "done":
 					return makeResponse("Closing connection", ResponseCode.Success);
 				default:
@@ -270,7 +279,7 @@ public class SFTPServer {
 			if (commandArgs.size() > 1) {
 				selectedListDir += commandArgs.get(1);
 			}
-			if (!FileSystem.dirExists(selectedListDir)) {
+			if (!FileSystem.pathExists(selectedListDir)) {
 				return makeResponse("Cant list directory because: " + selectedListDir + " does not exist", ResponseCode.Error);
 			} else if (FileSystem.pathIsFile(selectedListDir)) {
 				return makeResponse("Cant list directory because: " + selectedListDir + " is not a directory", ResponseCode.Error); 
@@ -302,7 +311,7 @@ public class SFTPServer {
 				selectedDir += destDir;
 			}
 			// validate dir can be navigated to and set currentDir if applicable
-			if (!FileSystem.dirExists(selectedDir)) {
+			if (!FileSystem.pathExists(selectedDir)) {
 				return makeResponse("Cant connect to directory because: " + selectedDir  + " does not exist", ResponseCode.Error);
 			} else if (FileSystem.pathIsFile(selectedDir)) {
 				return makeResponse("Cant list directory because: " + selectedDir  + " is not a directory", ResponseCode.Error);
@@ -314,11 +323,29 @@ public class SFTPServer {
 
 		private String kill(String fileName) {
 			String selectedFile = currentDir + fileName;
-			if (!FileSystem.dirExists(selectedFile)) {
+			if (!FileSystem.pathExists(selectedFile)) {
 				return makeResponse("Not deleted because " + selectedFile + " does not exist", ResponseCode.Error);
 			}
 			FileSystem.deleteFile(selectedFile);
-			return makeResponse("user1/delete.txt deleted", ResponseCode.Success);
+			return makeResponse(selectedFile + " deleted", ResponseCode.Success);
+		}
+
+		private String name(String fileName) {
+			String selectedFile = currentDir + fileName;
+			if (!FileSystem.pathExists(selectedFile)) {
+				return makeResponse("Can't find " + selectedFile, ResponseCode.Error);
+			}
+			pendingFileToRename = selectedFile;
+			return makeResponse("File exists", ResponseCode.Success);
+		}
+
+		private String tobe(String fileName) {
+			String renamedFile = currentDir + fileName;
+			if (FileSystem.pathExists(renamedFile)) {
+				return makeResponse("File wasn't renamed because " + renamedFile + " already exists", ResponseCode.Error);
+			}
+			FileSystem.renameFile(pendingFileToRename, renamedFile);
+			return makeResponse(pendingFileToRename + " renamed to " + renamedFile , ResponseCode.Success);
 		}
 	}
 }
