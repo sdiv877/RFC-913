@@ -54,6 +54,8 @@ final class TestRunner {
         testResults.add(test_Rename_non_existent_file());
         testResults.add(test_Rename_file_already_exists());
         testResults.add(test_Rename_argument_error());
+        testResults.add(test_Done());
+        testResults.add(test_Done_argument_error());
 
         System.out.println("| CLIENT TESTS COMPLETED |");
         printTestResults();
@@ -1018,6 +1020,50 @@ final class TestRunner {
             evalClientCommand(sftpClient, "done");
             r7 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(6));
             testOutcome = (r1 && r2 && r3 && r4 && r5 && r6 && r7) ? TestOutcome.Success : TestOutcome.Failure;
+        } catch (Exception e) {
+            e.printStackTrace();
+            testOutcome = TestOutcome.Exception;
+        }
+
+        System.out.println();
+        return testOutcome;
+    }
+
+    private static TestOutcome test_Done() {
+        System.out.println("36. Done");
+        SFTPClient sftpClient = new SFTPClient();
+        boolean r1, r2, r3;
+        TestOutcome testOutcome;
+
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        try {
+            evalClientCommand(sftpClient, "done");
+            r3 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(2));
+            testOutcome = (r1 && r2 && r3) ? TestOutcome.Success : TestOutcome.Failure;
+        } catch (Exception e) {
+            e.printStackTrace();
+            testOutcome = TestOutcome.Exception;
+        }
+
+        System.out.println();
+        return testOutcome;
+    }
+
+    private static TestOutcome test_Done_argument_error() {
+        System.out.println("37. Done, argument error");
+        SFTPClient sftpClient = new SFTPClient();
+        boolean r1, r2, r3, r4;
+        TestOutcome testOutcome;
+
+        r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getServerResHistory().get(0));
+        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getServerResHistory().get(1));
+        try {
+            evalClientCommand(sftpClient, "done done");
+            r3 = assertEquals("ERROR: Invalid Arguments\nUsage: DONE", sftpClient.getServerResHistory().get(2));
+            evalClientCommand(sftpClient, "done");
+            r4 = assertEquals("+Closing connection", sftpClient.getServerResHistory().get(3));
+            testOutcome = (r1 && r2 && r3 && r4) ? TestOutcome.Success : TestOutcome.Failure;
         } catch (Exception e) {
             e.printStackTrace();
             testOutcome = TestOutcome.Exception;

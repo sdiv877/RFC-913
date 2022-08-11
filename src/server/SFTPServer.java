@@ -140,8 +140,12 @@ public class SFTPServer {
 		}
 
 		private String validateArgs(String commandName, List<String> commandArgs) {
-			if (commandArgs.size() <= 2 && commandName.equals("list")) return null;
-			if (commandArgs.size() <= 1) return null;
+			boolean listOutOfBounds = (commandName.equals("list") && commandArgs.size() > 2);
+			boolean doneOutOfBounds = (commandName.equals("done") && commandArgs.size() > 0);
+			boolean remainingOutOfBounds = (!commandName.equals("list") &&
+					!commandName.equals("done") && commandArgs.size() > 1);
+
+			if (!listOutOfBounds && !doneOutOfBounds && !remainingOutOfBounds) return null;
 	
 			switch (commandName) {
 				case "user":
@@ -162,6 +166,8 @@ public class SFTPServer {
 					return "ERROR: Invalid Arguments\nUsage: NAME old-file-spec";
 				case "tobe":
 					return "ERROR: Invalid Arguments\nUsage: TOBE new-file-spec";
+				case "done":
+					return "ERROR: Invalid Arguments\nUsage: DONE";
 				default:
 					return null;
 			}
@@ -196,7 +202,7 @@ public class SFTPServer {
 				case "tobe":
 					return tobe(commandArgs.get(0));
 				case "done":
-					return makeResponse("Closing connection", ResponseCode.Success);
+					return done();
 				default:
 					return makeResponse("Could not call command", ResponseCode.Error);
 			}
@@ -346,6 +352,10 @@ public class SFTPServer {
 			}
 			FileSystem.renameFile(pendingFileToRename, renamedFile);
 			return makeResponse(pendingFileToRename + " renamed to " + renamedFile , ResponseCode.Success);
+		}
+
+		private String done() {
+			return makeResponse("Closing connection", ResponseCode.Success);
 		}
 	}
 }
