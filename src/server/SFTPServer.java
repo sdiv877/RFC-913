@@ -13,7 +13,11 @@ public class SFTPServer {
 	private static final int PORT = 6789;
 	private static final String SERVER_PROTOCOL = "RFC 913 SFTP";
 	private static final List<String> zeroArgCmds = Arrays.asList("done", "send", "stop");
-	private static final List<String> twoArgCmds = Arrays.asList("list");
+	private static final List<String> oneOrTwoArgCmds = Arrays.asList("list");
+	private static final List<String> twoArgCmds = Arrays.asList("stor");
+	private static final List<String> restrictedCmds = Arrays.asList(
+		"type", "list", "kill", "name", "tobe", "retr", "send", "stop", "stor", "size"
+	);
 
 	ServerSocket welcomeSocket;
 	private int numActiveClients;
@@ -72,7 +76,7 @@ public class SFTPServer {
 		private BufferedReader inFromClient;
 		private DataOutputStream outToClient;
 		private User selectedUser;
-		private boolean isLoggedIn;
+		private boolean loggedIn;
 		private String selectedAccount;
 		private String currentDir;
 		private String pendingDirChange;
@@ -99,7 +103,7 @@ public class SFTPServer {
 		}
 
 		public boolean isLoggedIn() {
-			return this.isLoggedIn;
+			return this.loggedIn;
 		}
 
 		public boolean isClosed() {
@@ -144,14 +148,24 @@ public class SFTPServer {
 			outToClient.flush();
 		}
 
-		private String validateArgs(String commandName, List<String> commandArgs) {
-			boolean twoArgCmdsOutOfBounds = (twoArgCmds.contains(commandName) && commandArgs.size() > 2);
+		private boolean callIsAuthorized(String commandName) {
+			return loggedIn || !restrictedCmds.contains(commandName);
+		}
+
+		private boolean argsAreValid(String commandName, List<String> commandArgs) {
+			boolean twoArgCmdsOutOfBounds = (twoArgCmds.contains(commandName)
+					&& (commandArgs.size() > 2 || commandArgs.size() < 2));
+			boolean oneOrTwoArgCmdsOutOfBounds = (oneOrTwoArgCmds.contains(commandName)
+					&& (commandArgs.size() < 1 || commandArgs.size() > 2));
 			boolean zeroArgCmdsOutOfBounds = (zeroArgCmds.contains(commandName) && commandArgs.size() > 0);
 			boolean remainingCmdsOutOfBounds = (!twoArgCmds.contains(commandName) && !zeroArgCmds.contains(commandName)
-					&& commandArgs.size() > 1);
+					&& !oneOrTwoArgCmds.contains(commandName) && (commandArgs.size() > 1 || commandArgs.size() < 0));
 
-			if (!twoArgCmdsOutOfBounds && !zeroArgCmdsOutOfBounds && !remainingCmdsOutOfBounds) return null;
-	
+			return (!twoArgCmdsOutOfBounds && !oneOrTwoArgCmdsOutOfBounds && !zeroArgCmdsOutOfBounds && 
+				!remainingCmdsOutOfBounds);
+		}
+
+		private String getArgError(String commandName) {
 			switch (commandName) {
 				case "user":
 					return "ERROR: Invalid Arguments\nUsage: USER user-id";
@@ -179,18 +193,29 @@ public class SFTPServer {
 					return "ERROR: Invalid Arguments\nUsage: SEND";
 				case "stop":
 					return "ERROR: Invalid Arguments\nUsage: STOP";
+				case "stor":
+					return "ERROR: Invalid Arguments\nUsage: STOR { NEW | OLD | APP } file-spec";
+				case "size":
+					return "ERROR: Invalid Arguments\nUsage: SIZE number-of-bytes-in-file";
 				default:
-					return null;
+					throw new IllegalArgumentException();
 			}
 		}
+
+		private String getUnknownCmdError() {
+			return "ERROR: Invalid Command\r\nAvailable Commands: \"USER\", \"ACCT\", \"PASS\", \"TYPE\", \"LIST\", \"CDIR\"," + 
+				" \"KILL\", \"NAME\", \"TOBE\", \"DONE\", \"RETR\", \"SEND\", \"STOP\", \"STOR\", \"SIZE\"";
+		} 
 
 		private String callCommand(String commandCall) {
 			ArrayList<String> commandArgs = Utils.splitString(commandCall, "\\s+");
 			String commandName = commandArgs.remove(0); // first value in call is just the command name
 
-			String argValidityMessage = validateArgs(commandName, commandArgs);
-			if (argValidityMessage != null) {
-				return makeResponse(argValidityMessage, ResponseCode.None);
+			if (!callIsAuthorized(commandName)) {
+				return makeResponse("Please log in first", ResponseCode.Error);
+			}
+			if (!argsAreValid(commandName, commandArgs)) {
+				return makeResponse(getArgError(commandName), ResponseCode.None);
 			}
 
 			switch (commandName) {
@@ -225,7 +250,7 @@ public class SFTPServer {
 				case "size":
 					return size(Integer.valueOf(commandArgs.get(0)));
 				default:
-					return makeResponse("Could not call command", ResponseCode.Error);
+					return makeResponse(getUnknownCmdError(), ResponseCode.None);
 			}
 		}
 
@@ -236,7 +261,7 @@ public class SFTPServer {
 				if (selectedUser.requiresAccount() || selectedUser.requiresPassword()) {
 					return makeResponse("User-id valid, send account and password", ResponseCode.Success);
 				} else {
-					isLoggedIn = true;
+					loggedIn = true;
 					return makeResponse(selectedUser.getId() + " logged in", ResponseCode.LoggedIn);
 				}
 			} else {
@@ -248,10 +273,10 @@ public class SFTPServer {
 			if (selectedUser.containsAccount(accountName)) {
 				selectedAccount = accountName;
 				currentDir = selectedUser.getRootDir();
-				if (selectedUser.requiresPassword() && !isLoggedIn) {
+				if (selectedUser.requiresPassword() && !loggedIn) {
 					return makeResponse("Account valid, send password", ResponseCode.Success);
 				} else {
-					isLoggedIn = true;
+					loggedIn = true;
 					if (pendingDirChange != null) {
 						String loginResponse = makeResponseString("Account valid, logged-in\n", ResponseCode.LoggedIn);
 						loginResponse += cdir(pendingDirChange);
@@ -269,7 +294,7 @@ public class SFTPServer {
 
 		private String pass(String password) {
 			if (selectedUser.getPassword().equals(password)) {
-				isLoggedIn = true;
+				loggedIn = true;
 				if (selectedUser.requiresAccount() && selectedAccount == null) {
 					return makeResponse("Send account", ResponseCode.Success);
 				} else {
@@ -323,7 +348,7 @@ public class SFTPServer {
 
 		private String cdir(String destDir) {
 			// signal the client must log in before cdir can happen
-			if (!isLoggedIn) {
+			if (!loggedIn) {
 				pendingDirChange = destDir;
 				return makeResponse("Directory exists, send account/password", ResponseCode.Success);
 			}
@@ -402,6 +427,9 @@ public class SFTPServer {
 		}
 
 		private String stor(String mode, String fileName) {
+			if (!fileName.contains(".")) {
+				return makeResponse("Specifier is not a file", ResponseCode.Error);
+			}
 			String selectedFile = Utils.appendIfMissing(currentDir, "/") + fileName;
 			switch (mode) {
 				case "new":

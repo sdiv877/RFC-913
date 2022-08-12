@@ -633,14 +633,7 @@ Successfully connected to localhost on port 6789
 +Closing connection
 
 49. Store non-existent file
-Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
-> user user1
-!user1 logged in
-> stor new fake.txt
-ERROR: File doesn't exist
-> done
-+Closing connection
+[NOT IMPLEMENTED AS THIS CONTRADICTS TESTS 43, 45 and 47]
 
 50. Store directory instead of file
 Successfully connected to localhost on port 6789
@@ -648,7 +641,7 @@ Successfully connected to localhost on port 6789
 > user user1
 !user1 logged in
 > stor new client
-ERROR: Specifier is not a file
+-Specifier is not a file
 > done
 +Closing connection
 
