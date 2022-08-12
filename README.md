@@ -1,4 +1,4 @@
-# RFC 913
+# RFC 913: SFTP
 
 ## Setup
 

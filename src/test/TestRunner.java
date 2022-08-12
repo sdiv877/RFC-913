@@ -1509,7 +1509,7 @@ final class TestRunner {
     }
 
     private static TestOutcome test_Unknown_command() {
-        System.out.println("52. Unknown command");
+        System.out.println("53. Unknown command");
         SFTPClient sftpClient = new SFTPClient();
         boolean r1, r2, r3, r4;
         TestOutcome testOutcome;
