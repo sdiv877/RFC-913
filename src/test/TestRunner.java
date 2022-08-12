@@ -19,7 +19,7 @@ final class TestRunner {
 
     public static void main(String[] argv) throws Exception {
         initTestFiles();
-        // clearGeneratedFiles();
+        clearGeneratedFiles();
 
         System.out.println("| RUNNING CLIENT TESTS |\n");
         testResults.add(test_User_id_valid());
@@ -77,9 +77,15 @@ final class TestRunner {
         testResults.add(test_Unknown_command());
         System.out.println("| CLIENT TESTS COMPLETED |");
 
-        clearGeneratedFiles();
+        if (!keepArgProvided(argv)) {
+            clearGeneratedFiles();
+        }
         printTestResults();
         Utils.waitForEnterKey();
+    }
+
+    private static boolean keepArgProvided(String argv[]) {
+        return argv.length != 0 && argv[0].equals("--keep");
     }
 
     private static void initTestFiles() {
@@ -110,7 +116,7 @@ final class TestRunner {
             }
         }
         // System.out.println("Test 16 requires manual verification.");
-        System.out.println("PASSED: " + successCount + "/" + testResults.size() + " tests.");
+        System.out.println("| PASSED: " + successCount + "/" + testResults.size() + " tests.   |");
     }
 
     private static boolean assertEquals(String expected, String actual) {

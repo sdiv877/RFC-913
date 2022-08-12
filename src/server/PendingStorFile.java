@@ -7,6 +7,7 @@ public class PendingStorFile {
     private String bytesToWrite;
     private int maxBytes;
     private String writeMode;
+    private String transferType;
 
     public PendingStorFile(String filePath, String writeMode) {
         this.filePath = filePath;
@@ -35,5 +36,13 @@ public class PendingStorFile {
 
     public String getWriteMode() {
         return this.writeMode;
+    }
+
+    public String getTransferType() {
+        return this.transferType;
+    }
+
+    public void setTransferType(String transferType) {
+        this.transferType = transferType;
     }
 }

@@ -12,13 +12,13 @@ public class SFTPServer {
 	private static final String HOSTNAME = "localhost";
 	private static final int PORT = 6789;
 	private static final String SERVER_PROTOCOL = "RFC 913 SFTP";
-	private static final List<String> zeroArgCmds = Arrays.asList("done", "send", "stop");
-	private static final List<String> oneOrTwoArgCmds = Arrays.asList("list");
-	private static final List<String> twoArgCmds = Arrays.asList("stor");
-	private static final List<String> restrictedCmds = Arrays.asList("type", "list", "kill", "name",
-			"tobe", "retr", "send", "stop", "stor", "size");
-	private static final List<String> allCmds = Arrays.asList("user", "acct", "pass", "type", "list",
+	private static final List<String> ZERO_ARG_CMDS = Arrays.asList("done", "send", "stop");
+	private static final List<String> ONE_OR_TWO_ARG_CMDS = Arrays.asList("list");
+	private static final List<String> TWO_ARG_CMDS = Arrays.asList("stor");
+	private static final List<String> ALL_CMDS = Arrays.asList("user", "acct", "pass", "type", "list",
 			"cdir", "kill", "name", "tobe", "done", "retr", "send", "stop", "stor", "size");
+	private static final List<String> RESTRICTED_CMDS = Arrays.asList("type", "list", "kill", "name",
+			"tobe", "retr", "send", "stop", "stor", "size");
 
 	ServerSocket welcomeSocket;
 	private int numActiveClients;
@@ -48,6 +48,7 @@ public class SFTPServer {
 			try {
 				// accept incoming connection
 				incomingClientSocket = welcomeSocket.accept();
+				numAttemptedClients++;
 				// instantiate ClientHandler with new connection and run on new thread
 				SFTPClientWorker clientHandler = new SFTPClientWorker(incomingClientSocket);
 				new Thread(clientHandler).start();
@@ -76,6 +77,7 @@ public class SFTPServer {
 		private Socket clientSocket;
 		private BufferedReader inFromClient;
 		private DataOutputStream outToClient;
+		private String transferType;
 		private User selectedUser;
 		private boolean loggedIn;
 		private String selectedAccount;
@@ -86,8 +88,9 @@ public class SFTPServer {
 		private PendingStorFile pendingStorFile;
 
 		public SFTPClientWorker(Socket clientSocket) {
-			this.id = ++numAttemptedClients;
+			this.id = numAttemptedClients;
 			this.clientSocket = clientSocket;
+			this.transferType = "b";
 			try {
 				inFromClient = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 				outToClient = new DataOutputStream(clientSocket.getOutputStream());
@@ -111,7 +114,8 @@ public class SFTPServer {
 		}
 
 		/**
-		 * Returns true if the Client has selected a User (does not imply they are logged in).
+		 * Returns true if the Client has selected a User (does not imply they are
+		 * logged in).
 		 */
 		public boolean isUserSelected() {
 			return this.selectedUser != null;
@@ -160,21 +164,22 @@ public class SFTPServer {
 		}
 
 		private boolean callIsAuthorized(String commandName) {
-			return loggedIn || !restrictedCmds.contains(commandName);
+			return loggedIn || !RESTRICTED_CMDS.contains(commandName);
 		}
 
 		private boolean argsAreValid(String commandName, List<String> commandArgs) {
-			boolean commandExists = allCmds.contains(commandName);
-			boolean twoArgCmdsOutOfBounds = (twoArgCmds.contains(commandName)
+			boolean commandExists = ALL_CMDS.contains(commandName);
+			boolean twoArgCmdsOutOfBounds = (TWO_ARG_CMDS.contains(commandName)
 					&& (commandArgs.size() > 2 || commandArgs.size() < 2));
-			boolean oneOrTwoArgCmdsOutOfBounds = (oneOrTwoArgCmds.contains(commandName)
+			boolean oneOrTwoArgCmdsOutOfBounds = (ONE_OR_TWO_ARG_CMDS.contains(commandName)
 					&& (commandArgs.size() < 1 || commandArgs.size() > 2));
-			boolean zeroArgCmdsOutOfBounds = (zeroArgCmds.contains(commandName) && commandArgs.size() > 0);
-			boolean remainingCmdsOutOfBounds = (!twoArgCmds.contains(commandName) && !zeroArgCmds.contains(commandName)
-					&& !oneOrTwoArgCmds.contains(commandName) && (commandArgs.size() != 1));
+			boolean zeroArgCmdsOutOfBounds = (ZERO_ARG_CMDS.contains(commandName) && commandArgs.size() > 0);
+			boolean remainingCmdsOutOfBounds = (!TWO_ARG_CMDS.contains(commandName)
+					&& !ZERO_ARG_CMDS.contains(commandName)
+					&& !ONE_OR_TWO_ARG_CMDS.contains(commandName) && (commandArgs.size() != 1));
 
-			return (commandExists && !twoArgCmdsOutOfBounds && !oneOrTwoArgCmdsOutOfBounds && 
-				!zeroArgCmdsOutOfBounds && !remainingCmdsOutOfBounds);
+			return (commandExists && !twoArgCmdsOutOfBounds && !oneOrTwoArgCmdsOutOfBounds &&
+					!zeroArgCmdsOutOfBounds && !remainingCmdsOutOfBounds);
 		}
 
 		private String getArgError(String commandName) {
@@ -278,6 +283,9 @@ public class SFTPServer {
 		}
 
 		private String acct(String accountName) {
+			if (!selectedUser.requiresAccount()) {
+				return makeResponse("No account required", ResponseCode.Error);
+			}
 			if (selectedUser.containsAccount(accountName)) {
 				selectedAccount = accountName;
 				currentDir = selectedUser.getRootDir();
@@ -301,6 +309,9 @@ public class SFTPServer {
 		}
 
 		private String pass(String password) {
+			if (!selectedUser.requiresPassword()) {
+				return makeResponse("No password required", ResponseCode.Error);
+			}
 			if (selectedUser.getPassword().equals(password)) {
 				loggedIn = true;
 				if (selectedUser.requiresAccount() && selectedAccount == null) {
@@ -324,10 +335,13 @@ public class SFTPServer {
 		private String type(String selectedType) {
 			switch (selectedType) {
 				case "a":
+					this.transferType = selectedType;
 					return makeResponse("Using Ascii mode", ResponseCode.Success);
 				case "b":
+					this.transferType = selectedType;
 					return makeResponse("Using Binary mode", ResponseCode.Success);
 				case "c":
+					this.transferType = selectedType;
 					return makeResponse("Using Continuous mode", ResponseCode.Success);
 				default:
 					return makeResponse("Type not valid", ResponseCode.Error);
@@ -409,7 +423,7 @@ public class SFTPServer {
 				return makeResponse("File wasn't renamed because " + renamedFile + " already exists", ResponseCode.Error);
 			}
 			FileSystem.renameFile(pendingFileToRename, renamedFile);
-			return makeResponse(pendingFileToRename + " renamed to " + renamedFile , ResponseCode.Success);
+			return makeResponse(pendingFileToRename + " renamed to " + renamedFile, ResponseCode.Success);
 		}
 
 		private String done() {
@@ -459,7 +473,7 @@ public class SFTPServer {
 					}
 					return makeResponse("Will write over old file", ResponseCode.Success);
 				case "app":
-				if (!FileSystem.pathExists(selectedFile)) {
+					if (!FileSystem.pathExists(selectedFile)) {
 						pendingStorFile = new PendingStorFile(selectedFile, "new");
 						return makeResponse("Will create new file", ResponseCode.Success);
 					}
@@ -475,6 +489,7 @@ public class SFTPServer {
 				writeToClient(makeResponse("ok, waiting for file", ResponseCode.Success));
 				pendingStorFile.setMaxBytes(maxBytes);
 				pendingStorFile.setBytesToWrite(inFromClient.readLine());
+				pendingStorFile.setTransferType(transferType);
 				FileSystem.writeFile(pendingStorFile);
 			} catch (Exception e) {
 				// e.printStackTrace();
