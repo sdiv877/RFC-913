@@ -557,7 +557,7 @@ Successfully connected to localhost on port 6789
 +File does not exist, will create new file
 > size 8
 +ok, waiting for file
-> BOT TEXT
+> TEST_43_
 +Saved user1/file.txt
 > done
 +Closing connection
@@ -571,7 +571,7 @@ Successfully connected to localhost on port 6789
 +File exists, will create new generation of file
 > size 8
 +ok, waiting for file
-> BOT TEXT
+> TEST_44_
 +Saved user1/file5.txt
 > done
 +Closing connection
@@ -584,6 +584,8 @@ Successfully connected to localhost on port 6789
 > stor old file.txt
 +Will create new file
 > size 8
++ok, waiting for file
+> TEST_45_
 +Saved user1/file.txt
 > done
 +Closing connection
@@ -596,6 +598,8 @@ Successfully connected to localhost on port 6789
 > stor old file.txt
 +Will write over old file
 > size 8
++ok, waiting for file
+> TEST_46_
 +Saved user1/file.txt
 > done
 +Closing connection
@@ -608,6 +612,8 @@ Successfully connected to localhost on port 6789
 > stor app file.txt
 +Will create new file
 > size 8
++ok, waiting for file
+> TEST_47_
 +Saved user1/file.txt
 > done
 +Closing connection
@@ -620,6 +626,8 @@ Successfully connected to localhost on port 6789
 > stor app file.txt
 +Will append to file
 > size 8
++ok, waiting for file
+> TEST_48_
 +Saved user1/file.txt
 > done
 +Closing connection

@@ -403,13 +403,31 @@ public class SFTPServer {
 
 		private String stor(String mode, String fileName) {
 			String selectedFile = Utils.appendIfMissing(currentDir, "/") + fileName;
-			if (!FileSystem.pathExists(selectedFile)) {
-				pendingStorFile = new PendingStorFile(selectedFile, mode);
-				return makeResponse("File does not exist, will create new file", ResponseCode.Success);
+			switch (mode) {
+				case "new":
+					if (!FileSystem.pathExists(selectedFile)) {
+						pendingStorFile = new PendingStorFile(selectedFile, mode);
+						return makeResponse("File does not exist, will create new file", ResponseCode.Success);
+					}
+					selectedFile = FileSystem.getUniqueFileName(fileName, currentDir);
+					pendingStorFile = new PendingStorFile(selectedFile, mode);
+					return makeResponse("File exists, will create new generation of file", ResponseCode.Success);
+				case "old":
+					pendingStorFile = new PendingStorFile(selectedFile, mode);
+					if (!FileSystem.pathExists(selectedFile)) {
+						return makeResponse("Will create new file", ResponseCode.Success);
+					}
+					return makeResponse("Will write over old file", ResponseCode.Success);
+				case "app":
+				if (!FileSystem.pathExists(selectedFile)) {
+						pendingStorFile = new PendingStorFile(selectedFile, "new");
+						return makeResponse("Will create new file", ResponseCode.Success);
+					}
+					pendingStorFile = new PendingStorFile(selectedFile, mode);
+					return makeResponse("Will append to file", ResponseCode.Success);
+				default:
+					throw new IllegalArgumentException();
 			}
-			selectedFile = FileSystem.getUniqueFileName(fileName, currentDir);
-			pendingStorFile = new PendingStorFile(selectedFile, mode);
-			return makeResponse("File exists, will create new generation of file", ResponseCode.Success);
 		}
 
 		private String size(int maxBytes) {

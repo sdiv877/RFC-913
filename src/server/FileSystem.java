@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.io.File;
 import java.nio.file.Files;
 
@@ -88,9 +89,28 @@ public final class FileSystem {
             e.printStackTrace();
         }
     }
+    
+    public static void writeFile(String relativeFilePath, String data, StandardOpenOption option) {
+        try {
+            Path filePath = Paths.get(HOME_DIR + relativeFilePath);
+            Files.write(filePath, data.getBytes(), option);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void writeFile(PendingStorFile storFile) {
-        writeFile(storFile.getFilePath(), storFile.getClampedBytesToWrite());
+        switch (storFile.getWriteMode()) {
+            case "new":
+                writeFile(storFile.getFilePath(), storFile.getClampedBytesToWrite(), StandardOpenOption.CREATE_NEW);
+                break;
+            case "old":
+                writeFile(storFile.getFilePath(), storFile.getClampedBytesToWrite());
+                break;
+            case "app":
+                writeFile(storFile.getFilePath(), storFile.getClampedBytesToWrite(), StandardOpenOption.APPEND);
+                break;
+        }
     }
 
     public static String readFile(String relativeFilePath) {
