@@ -60,4 +60,8 @@ public final class Utils {
         scan.nextLine();
         scan.close();
     }
+
+    public static void logMessage(String msg) {
+		System.out.println(msg);
+	}
 }

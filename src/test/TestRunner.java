@@ -1260,7 +1260,7 @@ final class TestRunner {
             evalClientCommand(sftpClient, "stor new file.txt");
             r4 = assertEquals("+File does not exist, will create new file", sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "size 8");
-            r5 = assertEquals("+ok, waiting for file", sftpClient.getLogHistory().get(4));
+            r5 = assertEquals("+Ok, waiting for file", sftpClient.getLogHistory().get(4));
             evalClientCommand(sftpClient, "TEST_43_");
             r6 = assertEquals("+Saved user1/file.txt", sftpClient.getLogHistory().get(5));
             evalClientCommand(sftpClient, "done");
@@ -1289,7 +1289,7 @@ final class TestRunner {
             evalClientCommand(sftpClient, "stor new file.txt");
             r4 = assertEquals("+File exists, will create new generation of file", sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "size 8");
-            r5 = assertEquals("+ok, waiting for file", sftpClient.getLogHistory().get(4));
+            r5 = assertEquals("+Ok, waiting for file", sftpClient.getLogHistory().get(4));
             evalClientCommand(sftpClient, "TEST_44_");
             r6 = assertEquals("+Saved user1/file5.txt", sftpClient.getLogHistory().get(5));
             evalClientCommand(sftpClient, "done");
@@ -1319,7 +1319,7 @@ final class TestRunner {
             evalClientCommand(sftpClient, "stor old file.txt");
             r4 = assertEquals("+Will create new file", sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "size 8");
-            r5 = assertEquals("+ok, waiting for file", sftpClient.getLogHistory().get(4));
+            r5 = assertEquals("+Ok, waiting for file", sftpClient.getLogHistory().get(4));
             evalClientCommand(sftpClient, "TEST_45_");
             r6 = assertEquals("+Saved user1/file.txt", sftpClient.getLogHistory().get(5));
             evalClientCommand(sftpClient, "done");
@@ -1348,7 +1348,7 @@ final class TestRunner {
             evalClientCommand(sftpClient, "stor old file.txt");
             r4 = assertEquals("+Will write over old file", sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "size 8");
-            r5 = assertEquals("+ok, waiting for file", sftpClient.getLogHistory().get(4));
+            r5 = assertEquals("+Ok, waiting for file", sftpClient.getLogHistory().get(4));
             evalClientCommand(sftpClient, "TEST_46_");
             r6 = assertEquals("+Saved user1/file.txt", sftpClient.getLogHistory().get(5));
             evalClientCommand(sftpClient, "done");
@@ -1378,7 +1378,7 @@ final class TestRunner {
             evalClientCommand(sftpClient, "stor app file.txt");
             r4 = assertEquals("+Will create new file", sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "size 8");
-            r5 = assertEquals("+ok, waiting for file", sftpClient.getLogHistory().get(4));
+            r5 = assertEquals("+Ok, waiting for file", sftpClient.getLogHistory().get(4));
             evalClientCommand(sftpClient, "TEST_47_");
             r6 = assertEquals("+Saved user1/file.txt", sftpClient.getLogHistory().get(5));
             evalClientCommand(sftpClient, "done");
@@ -1407,7 +1407,7 @@ final class TestRunner {
             evalClientCommand(sftpClient, "stor app file.txt");
             r4 = assertEquals("+Will append to file", sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "size 8");
-            r5 = assertEquals("+ok, waiting for file", sftpClient.getLogHistory().get(4));
+            r5 = assertEquals("+Ok, waiting for file", sftpClient.getLogHistory().get(4));
             evalClientCommand(sftpClient, "TEST_48_");
             r6 = assertEquals("+Saved user1/file.txt", sftpClient.getLogHistory().get(5));
             evalClientCommand(sftpClient, "done");

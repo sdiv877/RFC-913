@@ -5,6 +5,8 @@ import java.net.*;
 import java.util.List;
 import java.util.ArrayList;
 
+import utils.Utils;
+
 public class SFTPClient {
     private static final String HOSTNAME = "localhost";
     private static final int PORT = 6789;
@@ -126,7 +128,7 @@ public class SFTPClient {
     }
 
     private void logMessage(String msg) {
-        System.out.println(msg);
         logHistory.add(msg);
+        Utils.logMessage(msg);
     }
 }
