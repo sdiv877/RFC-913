@@ -1,5 +1,8 @@
 package server;
 
+/**
+ * A list of the possible types of responses the server can provide to the client
+ */
 public enum ResponseCode {
     None,
     Success,

@@ -2,6 +2,9 @@ package server;
 
 import java.util.List;
 
+/**
+ * Represents a user that exists on the FileSystem
+ */
 public class User {
     private String id;
     private List<String> accounts;

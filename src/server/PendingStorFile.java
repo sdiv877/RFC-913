@@ -2,6 +2,9 @@ package server;
 
 import utils.Utils;
 
+/**
+ * Represents a file that is to be written following a STOR and SIZE call
+ */
 public class PendingStorFile {
     private String filePath;
     private String bytesToWrite;

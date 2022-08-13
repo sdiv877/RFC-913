@@ -29,6 +29,12 @@ public final class Utils {
         return s;
     }
 
+    /**
+     * Performs bound checks to ensure that beginIndex and endIndex are kept within
+     * the length of str, and then calls substring normally.
+     * 
+     * @return the resulting substring
+     */
     public static String safeSubstring(String str, int beginIndex, int endIndex) {
         if (endIndex > str.length()) {
             endIndex = str.length();
@@ -39,6 +45,12 @@ public final class Utils {
         return str.substring(beginIndex, endIndex);
     }
 
+    /**
+     * Unescapes the newline and null terminating characters in a string to make
+     * them visible.
+     * 
+     * @return the unescaped string
+     */
     public static String unEscapeString(String s) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < s.length(); i++)
@@ -55,6 +67,10 @@ public final class Utils {
         return sb.toString();
     }
 
+    /**
+     * Stops execution of the program until an enter keypress is received from the
+     * keyboard stream.
+     */
     public static void waitForEnterKey() {
         Scanner scan = new Scanner(System.in);
         scan.nextLine();

@@ -26,6 +26,10 @@ public final class FileSystem {
         return HOME_DIR;
     }
 
+    /**
+     * @return Returns the user with a specified user-id from the FileSystem, or
+     *         null if the user doesn't exist.
+     */
     public static User getUser(String userId) {
         for (User user : FileSystem.users) {
             if (user.getId().equals(userId)) {
@@ -89,7 +93,7 @@ public final class FileSystem {
             e.printStackTrace();
         }
     }
-    
+
     public static void writeFile(String relativeFilePath, String data, StandardOpenOption option) {
         try {
             Path filePath = Paths.get(HOME_DIR + relativeFilePath);
@@ -99,6 +103,10 @@ public final class FileSystem {
         }
     }
 
+    /**
+     * Takes an object representing the information from a STOR and SIZE call, and
+     * calls the appropiate method to generate the file or modify the existing one.
+     */
     public static void writeFile(PendingStorFile storFile) {
         switch (storFile.getWriteMode()) {
             case "new":
@@ -117,7 +125,7 @@ public final class FileSystem {
         try {
             Path filePath = Paths.get(HOME_DIR + relativeFilePath);
             return Files.readString(filePath);
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return "";
         }
@@ -139,10 +147,16 @@ public final class FileSystem {
         return file.length();
     }
 
+    /**
+     * Ensures that if baseFile exists within relativeDirName, a number is appended
+     * to the end of the it to make it unique.
+     * 
+     * @return relativeDirName followed by the unique baseFile name
+     */
     public static String getUniqueFileName(String baseFile, String relativeDirName) {
         String baseName;
         String baseExtension;
-        if (baseFile.contains(".")) {
+        if (baseFile.contains(".")) { // parse out extension and name
             ArrayList<String> baseComponents = Utils.splitString(baseFile, "\\.");
             StringBuilder baseNameBuilder = new StringBuilder();
             for (int i = 0; i < baseComponents.size() - 1; i++) {
@@ -150,13 +164,15 @@ public final class FileSystem {
             }
             baseName = baseNameBuilder.toString();
             baseExtension = baseComponents.get(baseComponents.size() - 1);
-        } else {
+        } else { // no extension, name is just baseFile
             baseName = baseFile;
             baseExtension = "";
         }
 
+        // read all the files in relativeDirName
         String filesInDir = readDir(relativeDirName);
         int i = 1;
+        // increment the number prefixed to baseFile until it is no longer found
         while (filesInDir.contains(baseFile)) {
             baseFile = baseName + i + "." + baseExtension;
             i++;
@@ -164,6 +180,12 @@ public final class FileSystem {
         return Utils.appendIfMissing(relativeDirName, "/") + baseFile;
     }
 
+    /**
+     * Reads the resources/users.txt file and generates a list of Users for the
+     * FileSystem to store during runtime.
+     * 
+     * @return the list of users
+     */
     private static List<User> readUsers() {
         List<String> userData = new ArrayList<String>();
         List<User> users = new ArrayList<User>();

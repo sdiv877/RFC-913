@@ -29,6 +29,18 @@ public class SFTPClient {
         sftpClient.run();
     }
 
+    public boolean isClosed() {
+        return clientSocket.isClosed();
+    }
+
+    public List<String> getLogHistory() {
+        return logHistory;
+    }
+
+    /**
+     * Runs the client, continuously accepting input, sending it to the server and
+     * awaiting responses until an exception is thrown.
+     */
     public void run() {
         while (!isClosed()) {
             try {
@@ -41,8 +53,14 @@ public class SFTPClient {
         }
     }
 
+    /**
+     * Sends a command call to the server, awaits a response, and then logs it.
+     * 
+     * @param cmd the string form of the desired command call
+     * @throws Exception if the server could not be written to or read from
+     */
     public void evalCommand(String cmd) throws Exception {
-        writeToServer(cmd + "\n");
+        writeToServer(cmd);
         String commandRes = readFromServer();
         logMessage(commandRes);
 
@@ -51,14 +69,11 @@ public class SFTPClient {
         }
     }
 
-    public boolean isClosed() {
-        return clientSocket.isClosed();
-    }
-
-    public List<String> getLogHistory() {
-        return logHistory;
-    }
-
+    /**
+     * Attempts to connect to the prescribed server, including opening input and
+     * output streams to it. Closes any connections that were made and quits the
+     * program if the connection fails.
+     */
     private void connectToServer() {
         try {
             // Attempt to connect to server
@@ -75,6 +90,7 @@ public class SFTPClient {
             logMessage("Could not connect to " + HOSTNAME + ":" + PORT);
             e.printStackTrace();
             closeConnection();
+            System.exit(0);
         }
     }
 
@@ -82,6 +98,9 @@ public class SFTPClient {
         inFromUser = new BufferedReader(new InputStreamReader(System.in));
     }
 
+    /**
+     * Closes connections to the server, and the client socket.
+     */
     private void closeConnection() {
         try {
             clientSocket.close();
@@ -93,6 +112,12 @@ public class SFTPClient {
         }
     }
 
+    /**
+     * Polls the user's keyboard InputStream until a newline is reached.
+     * 
+     * @return the input received from the user
+     * @throws Exception if input from the user could not be read
+     */
     private String readUserInput() throws Exception {
         try {
             System.out.print("> ");
@@ -103,13 +128,20 @@ public class SFTPClient {
         }
     }
 
+    /**
+     * Polls the DataInputStream from the connectected server for characters, until
+     * a terminating '\0' is reached. This is a blocking method.
+     * 
+     * @return the message received from the server
+     * @throws Exception if input from the server could not be read
+     */
     private String readFromServer() throws Exception {
         try {
             StringBuilder serverRes = new StringBuilder();
-            char c = (char)inFromServer.read();
+            char c = (char) inFromServer.read();
             while (c != '\0') {
                 serverRes.append(c);
-                c = (char)inFromServer.read();
+                c = (char) inFromServer.read();
             }
             return serverRes.toString();
         } catch (Exception e) {
@@ -118,9 +150,16 @@ public class SFTPClient {
         }
     }
 
-    private void writeToServer(String cmd) throws Exception {
+    /**
+     * Sends a message to the currently connected server. A terminating newline is
+     * appended to the message if it is missing.
+     * 
+     * @throws Exception if the server could not be written to
+     */
+    private void writeToServer(String msg) throws Exception {
         try {
-            outToServer.writeBytes(cmd);
+            msg = Utils.appendIfMissing(msg, "\n");
+            outToServer.writeBytes(msg);
         } catch (Exception e) {
             logMessage("Could not write to server " + HOSTNAME + ":" + PORT);
             throw e;

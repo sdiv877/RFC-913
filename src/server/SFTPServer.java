@@ -21,7 +21,8 @@ public class SFTPServer {
 		try {
 			welcomeSocket = new ServerSocket(PORT);
 			welcomeSocket.setReuseAddress(true);
-			Utils.logMessage("Server started on " + HOSTNAME + " port " + PORT + " [Protocol: " + SERVER_PROTOCOL + "]");
+			Utils.logMessage(
+					"Server started on " + HOSTNAME + " port " + PORT + " [Protocol: " + SERVER_PROTOCOL + "]");
 		} catch (Exception e) {
 			Utils.logMessage("Could not start server on " + HOSTNAME + " port " + PORT);
 			e.printStackTrace();
@@ -33,8 +34,11 @@ public class SFTPServer {
 		return SERVER_PROTOCOL;
 	}
 
+	/**
+	 * Polls the server's welcome socket for any incoming requests and creates a new
+	 * SFTPClientWorker thread to handle communication with the client.
+	 */
 	public void run() {
-		// poll the welcomeSocket
 		while (true) {
 			try {
 				// accept incoming connection

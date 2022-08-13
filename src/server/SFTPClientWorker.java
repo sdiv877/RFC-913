@@ -8,6 +8,9 @@ import java.util.ArrayList;
 
 import utils.Utils;
 
+/**
+ * Represents the connection of a given SFTPServer instance to a specific client. Intended for use with a Thread.
+ */
 public class SFTPClientWorker implements Runnable {
 	private static final List<String> ZERO_ARG_CMDS = Arrays.asList("done", "send", "stop");
 	private static final List<String> ONE_OR_TWO_ARG_CMDS = Arrays.asList("list");
@@ -51,15 +54,15 @@ public class SFTPClientWorker implements Runnable {
     }
 
     /**
-     * Returns true of the Client has selected a valid User and password.
+     * @return true of the Client has selected a valid User and password.
      */
     public boolean isLoggedIn() {
         return this.loggedIn;
     }
 
     /**
-     * Returns true if the Client has selected a User (does not imply they are
-     * logged in).
+     * @return true if the Client has selected a User (does not imply they are
+     *         logged in).
      */
     public boolean isUserSelected() {
         return this.selectedUser != null;
@@ -69,6 +72,10 @@ public class SFTPClientWorker implements Runnable {
         return clientSocket.isClosed();
     }
 
+    /**
+     * Continuously polls the connection to the client's InputStream, attempts to
+     * call the relevant server command, and sends the response back to the client.
+     */
     public void run() {
         while (!isClosed()) {
             try {
@@ -79,13 +86,16 @@ public class SFTPClientWorker implements Runnable {
                 // Send the result back to the client
                 writeToClient(commandRes);
             } catch (Exception e) { // If we fail to communicate with the client, close the connection
-                // Utils.Utils.logMessage("Could not read/write to client " + id);
+                // Utils.logMessage("Could not read/write to client " + id);
                 // e.printStackTrace();
                 closeConnection();
             }
         }
     }
 
+    /**
+     * Closes all connections to the client.
+     */
     public void closeConnection() {
         try {
             clientSocket.close();
@@ -97,29 +107,51 @@ public class SFTPClientWorker implements Runnable {
         }
     }
 
+    /**
+     * Polls the InputStream from the client for characters, until
+     * a newline is reached. This is a blocking method.
+     * 
+     * @return the message received from the client
+     * @throws Exception if input from the client could not be read
+     */
     private String readFromClient() throws Exception {
         return inFromClient.readLine();
     }
 
+    /**
+     * Writes a message to the client output buffer and flushes it. To ensure the
+     * client is aware when the message is finished, use makeResponse() which
+     * appropriately appends a null terminating character to the message.
+     * 
+     * @throws Exception if the client could not be written to
+     */
     private void writeToClient(String s) throws Exception {
         outToClient.writeBytes(s);
         outToClient.flush();
     }
 
+    /**
+     * @return true if the user is logged or the command does not required
+     *         authentication
+     */
     private boolean callIsAuthorized(String commandName) {
         return loggedIn || !RESTRICTED_CMDS.contains(commandName);
     }
 
-    private boolean argsAreValid(String commandName, List<String> commandArgs) {
+    /**
+     * Verifies that a command matching commmandName exists, and that the number of
+     * args provided is within bounds for that command.
+     * 
+     * @return whether the command and it's number of args is valid
+     */
+    private boolean callIsValid(String commandName, int numArgs) {
         boolean commandExists = ALL_CMDS.contains(commandName);
-        boolean twoArgCmdsOutOfBounds = (TWO_ARG_CMDS.contains(commandName)
-                && (commandArgs.size() > 2 || commandArgs.size() < 2));
+        boolean twoArgCmdsOutOfBounds = (TWO_ARG_CMDS.contains(commandName) && (numArgs > 2 || numArgs < 2));
         boolean oneOrTwoArgCmdsOutOfBounds = (ONE_OR_TWO_ARG_CMDS.contains(commandName)
-                && (commandArgs.size() < 1 || commandArgs.size() > 2));
-        boolean zeroArgCmdsOutOfBounds = (ZERO_ARG_CMDS.contains(commandName) && commandArgs.size() > 0);
-        boolean remainingCmdsOutOfBounds = (!TWO_ARG_CMDS.contains(commandName)
-                && !ZERO_ARG_CMDS.contains(commandName)
-                && !ONE_OR_TWO_ARG_CMDS.contains(commandName) && (commandArgs.size() != 1));
+                && (numArgs < 1 || numArgs > 2));
+        boolean zeroArgCmdsOutOfBounds = (ZERO_ARG_CMDS.contains(commandName) && numArgs > 0);
+        boolean remainingCmdsOutOfBounds = (!TWO_ARG_CMDS.contains(commandName) && !ZERO_ARG_CMDS.contains(commandName)
+                && !ONE_OR_TWO_ARG_CMDS.contains(commandName) && (numArgs != 1));
 
         return (commandExists && !twoArgCmdsOutOfBounds && !oneOrTwoArgCmdsOutOfBounds &&
                 !zeroArgCmdsOutOfBounds && !remainingCmdsOutOfBounds);
@@ -163,6 +195,14 @@ public class SFTPClientWorker implements Runnable {
         }
     }
 
+    /**
+     * Calls a string that represents a server command call and returns the result
+     * of the call. May also return errors from lack of authorization or invalid
+     * arguments.
+     * 
+     * @param commandCall
+     * @return results of the command call or a meaningful error
+     */
     private String callCommand(String commandCall) {
         ArrayList<String> commandArgs = Utils.splitString(commandCall, "\\s+");
         String commandName = commandArgs.remove(0); // first value in call is just the command name
@@ -170,7 +210,7 @@ public class SFTPClientWorker implements Runnable {
         if (!callIsAuthorized(commandName)) {
             return makeResponse("Please log in first", ResponseCode.Error);
         }
-        if (!argsAreValid(commandName, commandArgs)) {
+        if (!callIsValid(commandName, commandArgs.size())) {
             return makeResponse(getArgError(commandName), ResponseCode.None);
         }
 
@@ -226,8 +266,11 @@ public class SFTPClientWorker implements Runnable {
     }
 
     private String acct(String accountName) {
+        if (!isUserSelected()) {
+            return makeResponse("Please select a user first", ResponseCode.Error);
+        }
         if (!selectedUser.requiresAccount()) {
-            return makeResponse("No account required", ResponseCode.Error);
+            return makeResponse("User is not associated with any accounts", ResponseCode.Error);
         }
         if (selectedUser.containsAccount(accountName)) {
             selectedAccount = accountName;
