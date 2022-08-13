@@ -26,8 +26,8 @@ public class SFTPClientWorker implements Runnable {
     private DataOutputStream outToClient;
     private String transferType;
     private User selectedUser;
-    private boolean loggedIn;
     private String selectedAccount;
+    private boolean passwordProvided;
     private String currentDir;
     private String pendingDirChange;
     private String pendingFileToRename;
@@ -54,10 +54,10 @@ public class SFTPClientWorker implements Runnable {
     }
 
     /**
-     * @return true of the Client has selected a valid User and password.
+     * @return true of the Client has selected a valid User, account and password.
      */
     public boolean isLoggedIn() {
-        return this.loggedIn;
+        return isUserSelected() && isAccountSelected() && isPasswordProvided();
     }
 
     /**
@@ -66,6 +66,18 @@ public class SFTPClientWorker implements Runnable {
      */
     public boolean isUserSelected() {
         return this.selectedUser != null;
+    }
+
+    public boolean isAccountSelected() {
+        return this.selectedAccount != null || !this.selectedUser.requiresAccount();
+    }
+
+    public boolean isPasswordProvided() {
+        return passwordProvided || !this.selectedUser.requiresPassword();
+    }
+
+    public boolean isPendingDirChange() {
+        return this.pendingDirChange != null;
     }
 
     public boolean isClosed() {
@@ -108,6 +120,21 @@ public class SFTPClientWorker implements Runnable {
     }
 
     /**
+     * Clears any information associated with the clients current user session.
+     * (selectedUser, currentDir, pendingStorFile etc.)
+     */
+    private void clearUserState() {
+        selectedUser = null;
+        selectedAccount = null;
+        passwordProvided = false;
+        currentDir = null;
+        pendingDirChange = null;
+        pendingFileToRename = null;
+        pendingFileToRetrieve = null;
+        pendingStorFile = null;
+    }
+
+    /**
      * Polls the InputStream from the client for characters, until
      * a newline is reached. This is a blocking method.
      * 
@@ -135,7 +162,7 @@ public class SFTPClientWorker implements Runnable {
      *         authentication
      */
     private boolean callIsAuthorized(String commandName) {
-        return loggedIn || !RESTRICTED_CMDS.contains(commandName);
+        return isLoggedIn() || !RESTRICTED_CMDS.contains(commandName);
     }
 
     /**
@@ -251,13 +278,14 @@ public class SFTPClientWorker implements Runnable {
     }
 
     private String user(String userId) {
-        selectedUser = FileSystem.getUser(userId);
-        if (selectedUser != null) {
+        User foundUser = FileSystem.getUser(userId);
+        if (foundUser != null) {
+            clearUserState();
+            selectedUser = foundUser;
             currentDir = selectedUser.getRootDir();
             if (selectedUser.requiresAccount() || selectedUser.requiresPassword()) {
                 return makeResponse("User-id valid, send account and password", ResponseCode.Success);
             } else {
-                loggedIn = true;
                 return makeResponse(selectedUser.getId() + " logged in", ResponseCode.LoggedIn);
             }
         } else {
@@ -275,11 +303,10 @@ public class SFTPClientWorker implements Runnable {
         if (selectedUser.containsAccount(accountName)) {
             selectedAccount = accountName;
             currentDir = selectedUser.getRootDir();
-            if (selectedUser.requiresPassword() && !loggedIn) {
+            if (selectedUser.requiresPassword() && !isLoggedIn()) {
                 return makeResponse("Account valid, send password", ResponseCode.Success);
             } else {
-                loggedIn = true;
-                if (pendingDirChange != null) {
+                if (isPendingDirChange()) {
                     String loginResponse = makeResponseString("Account valid, logged-in\n", ResponseCode.LoggedIn);
                     loginResponse += cdir(pendingDirChange);
                     pendingDirChange = null;
@@ -299,11 +326,11 @@ public class SFTPClientWorker implements Runnable {
             return makeResponse("No password required", ResponseCode.Error);
         }
         if (selectedUser.getPassword().equals(password)) {
-            loggedIn = true;
-            if (selectedUser.requiresAccount() && selectedAccount == null) {
+            passwordProvided = true;
+            if (selectedUser.requiresAccount() && !isAccountSelected()) {
                 return makeResponse("Send account", ResponseCode.Success);
             } else {
-                if (pendingDirChange != null) {
+                if (isPendingDirChange()) {
                     String loginResponse = makeResponseString("Logged in\n", ResponseCode.LoggedIn);
                     loginResponse += cdir(pendingDirChange);
                     pendingDirChange = null;
