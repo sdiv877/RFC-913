@@ -9,16 +9,17 @@ import java.util.ArrayList;
 import utils.Utils;
 
 /**
- * Represents the connection of a given SFTPServer instance to a specific client. Intended for use with a Thread.
+ * Represents the connection of a given SFTPServer instance to a specific client.
+ * Intended for use with a Thread.
  */
 public class SFTPClientWorker implements Runnable {
-	private static final List<String> ZERO_ARG_CMDS = Arrays.asList("done", "send", "stop");
-	private static final List<String> ONE_OR_TWO_ARG_CMDS = Arrays.asList("list");
-	private static final List<String> TWO_ARG_CMDS = Arrays.asList("stor");
-	private static final List<String> ALL_CMDS = Arrays.asList("user", "acct", "pass", "type", "list",
-			"cdir", "kill", "name", "tobe", "done", "retr", "send", "stop", "stor", "size");
-	private static final List<String> RESTRICTED_CMDS = Arrays.asList("type", "list", "kill", "name",
-			"tobe", "retr", "send", "stop", "stor", "size");
+    private static final List<String> ZERO_ARG_CMDS = Arrays.asList("done", "send", "stop");
+    private static final List<String> ONE_OR_TWO_ARG_CMDS = Arrays.asList("list");
+    private static final List<String> TWO_ARG_CMDS = Arrays.asList("stor");
+    private static final List<String> ALL_CMDS = Arrays.asList("user", "acct", "pass", "type", "list",
+            "cdir", "kill", "name", "tobe", "done", "retr", "send", "stop", "stor", "size");
+    private static final List<String> RESTRICTED_CMDS = Arrays.asList("type", "list", "kill", "name",
+            "tobe", "retr", "send", "stop", "stor", "size");
 
     private int id;
     private Socket clientSocket;
@@ -217,8 +218,8 @@ public class SFTPClientWorker implements Runnable {
             case "size":
                 return "ERROR: Invalid Arguments\nUsage: SIZE number-of-bytes-in-file";
             default:
-                return "ERROR: Invalid Command\r\nAvailable Commands: \"USER\", \"ACCT\", \"PASS\", \"TYPE\", \"LIST\"," + 
-                " \"CDIR\", \"KILL\", \"NAME\", \"TOBE\", \"DONE\", \"RETR\", \"SEND\", \"STOP\", \"STOR\", \"SIZE\"";
+                return "ERROR: Invalid Command\r\nAvailable Commands: \"USER\", \"ACCT\", \"PASS\", \"TYPE\", \"LIST\","
+                        + " \"CDIR\", \"KILL\", \"NAME\", \"TOBE\", \"DONE\", \"RETR\", \"SEND\", \"STOP\", \"STOR\", \"SIZE\"";
         }
     }
 
@@ -280,9 +281,12 @@ public class SFTPClientWorker implements Runnable {
     private String user(String userId) {
         User foundUser = FileSystem.getUser(userId);
         if (foundUser != null) {
+            // clear state on user switch to stop new user from accessing old information
             clearUserState();
+            // update selectedUser and cdir to the root dir of the new user
             selectedUser = foundUser;
             currentDir = selectedUser.getRootDir();
+            // distinguish between accounts that need accounts/passwords and ones that don't
             if (selectedUser.requiresAccount() || selectedUser.requiresPassword()) {
                 return makeResponse("User-id valid, send account and password", ResponseCode.Success);
             } else {
@@ -294,24 +298,28 @@ public class SFTPClientWorker implements Runnable {
     }
 
     private String acct(String accountName) {
+        // guard against trying to select an account without specifying a user
+        // or trying to select an account when a user doesn't have any
         if (!isUserSelected()) {
             return makeResponse("Please select a user first", ResponseCode.Error);
-        }
-        if (!selectedUser.requiresAccount()) {
+        } else if (!selectedUser.requiresAccount()) {
             return makeResponse("User is not associated with any accounts", ResponseCode.Error);
         }
         if (selectedUser.containsAccount(accountName)) {
+            // update selectedAccount
             selectedAccount = accountName;
-            currentDir = selectedUser.getRootDir();
+            // handle users that need a password along with their account
             if (selectedUser.requiresPassword() && !isLoggedIn()) {
                 return makeResponse("Account valid, send password", ResponseCode.Success);
             } else {
+                // if there were any dir changes that took place prior to login
+                // handle them now
                 if (isPendingDirChange()) {
                     String loginResponse = makeResponseString("Account valid, logged-in\n", ResponseCode.LoggedIn);
                     loginResponse += cdir(pendingDirChange);
                     pendingDirChange = null;
                     return loginResponse;
-                } else {
+                } else { // otherwise send normal login acknowledgement
                     return makeResponse("Account valid, logged-in", ResponseCode.LoggedIn);
                 }
             }
@@ -322,20 +330,28 @@ public class SFTPClientWorker implements Runnable {
     }
 
     private String pass(String password) {
-        if (!selectedUser.requiresPassword()) {
+        // guard against trying to use a password when no selectedUser, or when
+        // selectedUser has no pasword
+        if (!isUserSelected()) {
+            return makeResponse("Please select a user first", ResponseCode.Error);
+        } else if (!selectedUser.requiresPassword()) {
             return makeResponse("No password required", ResponseCode.Error);
         }
         if (selectedUser.getPassword().equals(password)) {
+            // signal the user has provided a correct password
             passwordProvided = true;
+            // handle users that need an account along with their password
             if (selectedUser.requiresAccount() && !isAccountSelected()) {
                 return makeResponse("Send account", ResponseCode.Success);
             } else {
+                // if there were any dir changes that took place prior to login
+                // handle them now
                 if (isPendingDirChange()) {
                     String loginResponse = makeResponseString("Logged in\n", ResponseCode.LoggedIn);
                     loginResponse += cdir(pendingDirChange);
                     pendingDirChange = null;
                     return loginResponse;
-                } else {
+                } else { // otherwise send normal login acknowledgement
                     currentDir = selectedUser.getRootDir();
                     return makeResponse("Logged in", ResponseCode.LoggedIn);
                 }
@@ -363,13 +379,16 @@ public class SFTPClientWorker implements Runnable {
 
     private String list(List<String> commandArgs) {
         String selectedListDir = currentDir;
+        // append the extra arg to list a subdir, if given
         if (commandArgs.size() > 1) {
             selectedListDir += commandArgs.get(1);
         }
         if (!FileSystem.pathExists(selectedListDir)) {
-            return makeResponse("Cant list directory because: " + selectedListDir + " does not exist", ResponseCode.Error);
+            return makeResponse("Can't list directory because: " + selectedListDir + " does not exist",
+                    ResponseCode.Error);
         } else if (FileSystem.pathIsFile(selectedListDir)) {
-            return makeResponse("Cant list directory because: " + selectedListDir + " is not a directory", ResponseCode.Error); 
+            return makeResponse("Can't list directory because: " + selectedListDir + " is not a directory",
+                    ResponseCode.Error);
         }
         switch (commandArgs.get(0)) {
             case "f":
@@ -398,9 +417,9 @@ public class SFTPClientWorker implements Runnable {
         }
         // validate dir can be navigated to
         if (!FileSystem.pathExists(selectedDir)) {
-            return makeResponse("Cant connect to directory because: " + selectedDir  + " does not exist", ResponseCode.Error);
+            return makeResponse("Can't connect to directory because: " + selectedDir  + " does not exist", ResponseCode.Error);
         } else if (FileSystem.pathIsFile(selectedDir)) {
-            return makeResponse("Cant list directory because: " + selectedDir  + " is not a directory", ResponseCode.Error);
+            return makeResponse("Can't list directory because: " + selectedDir  + " is not a directory", ResponseCode.Error);
         }
         // signal the client must be logged in before cdir can happen
         if (!isLoggedIn()) {
@@ -513,10 +532,10 @@ public class SFTPClientWorker implements Runnable {
     }
 
     private static String makeResponse(String msg, ResponseCode responseCode) {
-		return makeResponseString(msg, responseCode) + '\0';
-	}
+        return makeResponseString(msg, responseCode) + '\0';
+    }
 
-	private static String makeResponseString(String msg, ResponseCode responseCode) {
-		return responseCode.toString() + msg;
-	}
+    private static String makeResponseString(String msg, ResponseCode responseCode) {
+        return responseCode.toString() + msg;
+    }
 }

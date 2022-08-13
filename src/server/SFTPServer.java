@@ -21,8 +21,7 @@ public class SFTPServer {
 		try {
 			welcomeSocket = new ServerSocket(PORT);
 			welcomeSocket.setReuseAddress(true);
-			Utils.logMessage(
-					"Server started on " + HOSTNAME + " port " + PORT + " [Protocol: " + SERVER_PROTOCOL + "]");
+			Utils.logMessage("Server started on " + HOSTNAME + " port " + PORT + " [Protocol: " + SERVER_PROTOCOL + "]");
 		} catch (Exception e) {
 			Utils.logMessage("Could not start server on " + HOSTNAME + " port " + PORT);
 			e.printStackTrace();

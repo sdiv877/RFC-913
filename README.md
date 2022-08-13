@@ -263,7 +263,7 @@ Successfully connected to localhost on port 6789
 > user user1
 !user1 logged in
 > list f fake
--Cant list directory because: user1/fake does not exist
+-Can't list directory because: user1/fake does not exist
 > done
 +Closing connection
 
@@ -273,7 +273,7 @@ Successfully connected to localhost on port 6789
 > user user1
 !user1 logged in
 > list f license.txt
--Cant list directory because: user1/license.txt is not a directory
+-Can't list directory because: user1/license.txt is not a directory
 > done
 +Closing connection
 
@@ -328,7 +328,7 @@ Successfully connected to localhost on port 6789
 > user user1
 !user1 logged in
 > cdir folder1/folder2/folder3
--Cant connect to directory because: user1/folder1/folder2/folder3 does not exist
+-Can't connect to directory because: user1/folder1/folder2/folder3 does not exist
 > done
 +Closing connection
 
@@ -338,7 +338,7 @@ Successfully connected to localhost on port 6789
 > user user1
 !user1 logged in
 > cdir temp/data.csv
--Cant list directory because: user1/temp/data.csv is not a directory
+-Can't list directory because: user1/temp/data.csv is not a directory
 > done
 +Closing connection
 
