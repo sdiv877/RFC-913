@@ -10,7 +10,7 @@ import utils.Utils;
 
 final class TestRunner {
     private static String CLIENT_WELCOME_MSG = "Successfully connected to localhost on port 6789";
-    private static String SERVER_WELCOME_MSG = "+RFC 913 SFTP Server";
+    private static String SERVER_ONLINE_MSG = "+RFC 913 SFTP Server Online";
     private static String ANY_NEWLINE = "\r?\n|\r";
     private static String UNKNOWN_COMMAND_MSG = "ERROR: Invalid Command\r\nAvailable Commands: \"USER\", \"ACCT\", \"PASS\", \"TYPE\","
             + " \"LIST\", \"CDIR\", \"KILL\", \"NAME\", \"TOBE\", \"DONE\", \"RETR\", \"SEND\", \"STOP\", \"STOR\", \"SIZE\"";
@@ -149,7 +149,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
@@ -172,7 +172,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user2");
             r3 = assertEquals("+User-id valid, send account and password", sftpClient.getLogHistory().get(2));
@@ -197,7 +197,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user3");
             r3 = assertEquals("+User-id valid, send account and password", sftpClient.getLogHistory().get(2));
@@ -222,7 +222,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user4");
             r3 = assertEquals("+User-id valid, send account and password", sftpClient.getLogHistory().get(2));
@@ -249,7 +249,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user5");
             r3 = assertEquals("+User-id valid, send account and password", sftpClient.getLogHistory().get(2));
@@ -280,7 +280,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user7");
             r3 = assertEquals("-Invalid user-id, try again", sftpClient.getLogHistory().get(2));
@@ -303,7 +303,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user4");
             r3 = assertEquals("+User-id valid, send account and password", sftpClient.getLogHistory().get(2));
@@ -328,7 +328,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user4");
             r3 = assertEquals("+User-id valid, send account and password", sftpClient.getLogHistory().get(2));
@@ -353,7 +353,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user7 user7");
             r3 = assertEquals("ERROR: Invalid Arguments\nUsage: USER user-id", sftpClient.getLogHistory().get(2));
@@ -376,7 +376,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user4");
             r3 = assertEquals("+User-id valid, send account and password", sftpClient.getLogHistory().get(2));
@@ -401,7 +401,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user4");
             r3 = assertEquals("+User-id valid, send account and password", sftpClient.getLogHistory().get(2));
@@ -426,7 +426,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
@@ -455,7 +455,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
@@ -479,12 +479,12 @@ final class TestRunner {
         System.out.println("14. List standard, current directory");
         SFTPClient sftpClient = new SFTPClient();
         List<String> expectedFiles = Arrays.asList("+user1/", "file2.txt", "file.txt", "file3.txt", "file1.txt",
-                "temp", "file4.txt", ".DS_Store", "data2.jpg", "data.jpg", "folder1", "license.txt");
+                "temp", "file4.txt", "data2.jpg", "data.jpg", "folder1", "license.txt");
         boolean r1, r2, r3, r4, r5;
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
@@ -510,7 +510,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
@@ -535,7 +535,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
@@ -560,7 +560,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
@@ -586,7 +586,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
@@ -612,7 +612,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
@@ -640,7 +640,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
@@ -667,7 +667,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
@@ -692,7 +692,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
@@ -717,7 +717,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
@@ -743,7 +743,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
@@ -769,7 +769,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user2");
             r3 = assertEquals("+User-id valid, send account and password", sftpClient.getLogHistory().get(2));
@@ -797,7 +797,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user3");
             r3 = assertEquals("+User-id valid, send account and password", sftpClient.getLogHistory().get(2));
@@ -825,7 +825,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user4");
             r3 = assertEquals("+User-id valid, send account and password", sftpClient.getLogHistory().get(2));
@@ -854,7 +854,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
@@ -880,7 +880,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
@@ -905,7 +905,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
@@ -931,7 +931,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
@@ -957,7 +957,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
@@ -987,7 +987,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
@@ -1012,7 +1012,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
@@ -1040,7 +1040,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
@@ -1071,7 +1071,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "done");
             r3 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(2));
@@ -1092,7 +1092,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "done done");
             r3 = assertEquals("ERROR: Invalid Arguments\nUsage: DONE", sftpClient.getLogHistory().get(2));
@@ -1115,7 +1115,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
@@ -1143,7 +1143,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
@@ -1170,7 +1170,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
@@ -1195,7 +1195,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
@@ -1220,7 +1220,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
@@ -1252,7 +1252,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
@@ -1281,7 +1281,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
@@ -1311,7 +1311,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
@@ -1340,7 +1340,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
@@ -1370,7 +1370,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
@@ -1399,7 +1399,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
@@ -1428,7 +1428,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
@@ -1453,7 +1453,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "user user1");
             r3 = assertEquals("!user1 logged in", sftpClient.getLogHistory().get(2));
@@ -1487,7 +1487,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "type a");
             r3 = assertEquals("-Please log in first", sftpClient.getLogHistory().get(2));
@@ -1514,7 +1514,7 @@ final class TestRunner {
         TestOutcome testOutcome;
 
         r1 = assertEquals(CLIENT_WELCOME_MSG, sftpClient.getLogHistory().get(0));
-        r2 = assertEquals(SERVER_WELCOME_MSG, sftpClient.getLogHistory().get(1));
+        r2 = assertEquals(SERVER_ONLINE_MSG, sftpClient.getLogHistory().get(1));
         try {
             evalClientCommand(sftpClient, "unknown");
             r3 = assertEquals(UNKNOWN_COMMAND_MSG, sftpClient.getLogHistory().get(2));

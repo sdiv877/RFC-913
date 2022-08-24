@@ -42,7 +42,7 @@ user6|acct1 acct2 acct3 acct4|pass6
 - All commands from the [RFC 913: SFTP](https://datatracker.ietf.org/doc/html/rfc913) specification have been implemented
 - The server supports multithreaded socket connections, each client connection will run on a unique thread
 - Each user is assigned a unique folder on the server which they are locked to
-- Relative and absolute filepaths are supported, the user's folder is translated as the root directory
+- Relative and absolute filepaths are supported for the `CDIR` command, the user's folder is translated as the root directory
 
 ## Testing
 
@@ -62,7 +62,7 @@ The expected output of the test script is shown below. Some values such as the n
 
 1. User-id valid
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user1
 !user1 logged in
 > done
@@ -70,7 +70,7 @@ Successfully connected to localhost on port 6789
 
 2. User-id valid, account required
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user2
 +User-id valid, send account and password
 > acct acct1
@@ -80,7 +80,7 @@ Successfully connected to localhost on port 6789
 
 3. User-id valid, password required
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user3
 +User-id valid, send account and password
 > pass pass3
@@ -90,7 +90,7 @@ Successfully connected to localhost on port 6789
 
 4. User-id valid, account and password required
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user4
 +User-id valid, send account and password
 > acct acct1
@@ -102,7 +102,7 @@ Successfully connected to localhost on port 6789
 
 5. User-id valid, account and password required. Multiple accounts
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user5
 +User-id valid, send account and password
 > pass pass5
@@ -118,7 +118,7 @@ Successfully connected to localhost on port 6789
 
 6. User-id invalid
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user7
 -Invalid user-id, try again
 > done
@@ -126,7 +126,7 @@ Successfully connected to localhost on port 6789
 
 7. Account invalid
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user4
 +User-id valid, send account and password
 > acct acct2
@@ -136,7 +136,7 @@ Successfully connected to localhost on port 6789
 
 8. Password invalid
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user4
 +User-id valid, send account and password
 > pass wrong
@@ -146,7 +146,7 @@ Successfully connected to localhost on port 6789
 
 9. User-id, argument error
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user7 user7
 ERROR: Invalid Arguments
 Usage: USER user-id
@@ -155,7 +155,7 @@ Usage: USER user-id
 
 10. Account, argument error
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user4
 +User-id valid, send account and password
 > acct acct2 acct2
@@ -166,7 +166,7 @@ Usage: ACCT account
 
 11. Password, argument error
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user4
 +User-id valid, send account and password
 > pass wrong wrong
@@ -177,7 +177,7 @@ Usage: PASS password
 
 12. Type
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user1
 !user1 logged in
 > type a
@@ -191,7 +191,7 @@ Successfully connected to localhost on port 6789
 
 13. Type, argument error
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user1
 !user1 logged in
 > type a a
@@ -204,62 +204,64 @@ Usage: TYPE { A | B | C }
 
 14. List standard, current directory
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user1
 !user1 logged in
 > list f
 +user1/
-file2.txt
-file.txt
-file3.txt
-file1.txt
-temp
-file4.txt
-.DS_Store
-data2.jpg
 data.jpg
+data2.jpg
+delete.txt
+file.txt
+file1.txt
+file2.txt
+file3.txt
+file4.txt
 folder1
 license.txt
+rename.txt
+temp
 > done
 +Closing connection
 
 15. List standard, other directory
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user1
 !user1 logged in
 > list f temp
 +user1/temp
+data.csv
 file4.txt
 file5.txt
-data.csv
 > done
 +Closing connection
 
 16. List verbose, current directory
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user1
 !user1 logged in
 > list v
 +user1/
-Name: file2.txt    Path: user1/file2.txt    Size: 9 Bytes    
-Name: file.txt    Path: user1/file.txt    Size: 16 Bytes    
-Name: file3.txt    Path: user1/file3.txt    Size: 9 Bytes    
-Name: file1.txt    Path: user1/file1.txt    Size: 8 Bytes    
-Name: temp    Path: user1/temp    Size: 160 Bytes    
-Name: file4.txt    Path: user1/file4.txt    Size: 8 Bytes    
-Name: .DS_Store    Path: user1/.DS_Store    Size: 6148 Bytes    
-Name: data2.jpg    Path: user1/data2.jpg    Size: 2345 Bytes    
-Name: data.jpg    Path: user1/data.jpg    Size: 50300 Bytes    
-Name: folder1    Path: user1/folder1    Size: 128 Bytes    
-Name: license.txt    Path: user1/license.txt    Size: 11 Bytes    
+Name: data.jpg    Path: user1/data.jpg    Size: 679 Bytes
+Name: data2.jpg    Path: user1/data2.jpg    Size: 643 Bytes
+Name: delete.txt    Path: user1/delete.txt    Size: 0 Bytes
+Name: file.txt    Path: user1/file.txt    Size: 0 Bytes
+Name: file1.txt    Path: user1/file1.txt    Size: 33 Bytes
+Name: file2.txt    Path: user1/file2.txt    Size: 33 Bytes
+Name: file3.txt    Path: user1/file3.txt    Size: 33 Bytes
+Name: file4.txt    Path: user1/file4.txt    Size: 33 Bytes
+Name: folder1    Path: user1/folder1    Size: 0 Bytes
+Name: license.txt    Path: user1/license.txt    Size: 35 Bytes
+Name: rename.txt    Path: user1/rename.txt    Size: 0 Bytes
+Name: temp    Path: user1/temp    Size: 0 Bytes 
 > done
 +Closing connection
 
 17. List, non-existent directory
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user1
 !user1 logged in
 > list f fake
@@ -269,7 +271,7 @@ Successfully connected to localhost on port 6789
 
 18. List file instead of directory
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user1
 !user1 logged in
 > list f license.txt
@@ -279,7 +281,7 @@ Successfully connected to localhost on port 6789
 
 19. List, argument error
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user1
 !user1 logged in
 > list f / /
@@ -292,7 +294,7 @@ Usage: LIST { F | V } directory-path
 
 20. Change directory, relative path
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user1
 !user1 logged in
 > cdir folder1
@@ -304,7 +306,7 @@ Successfully connected to localhost on port 6789
 
 21. Change directory, user root
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user1
 !user1 logged in
 > cdir /
@@ -314,7 +316,7 @@ Successfully connected to localhost on port 6789
 
 22. Change directory, absolute path
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user1
 !user1 logged in
 > cdir /folder1/folder2
@@ -324,7 +326,7 @@ Successfully connected to localhost on port 6789
 
 23. Change directory, non-existent directory
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user1
 !user1 logged in
 > cdir folder1/folder2/folder3
@@ -334,7 +336,7 @@ Successfully connected to localhost on port 6789
 
 24. Change directory, file instead of directory
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user1
 !user1 logged in
 > cdir temp/data.csv
@@ -344,7 +346,7 @@ Successfully connected to localhost on port 6789
 
 25. Change directory, account required
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user2
 +User-id valid, send account and password
 > cdir folder1
@@ -357,7 +359,7 @@ Successfully connected to localhost on port 6789
 
 26. Change directory, password required
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user3
 +User-id valid, send account and password
 > cdir folder1
@@ -370,7 +372,7 @@ Successfully connected to localhost on port 6789
 
 27. Change directory, account and password required
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user4
 +User-id valid, send account and password
 > cdir folder1
@@ -385,7 +387,7 @@ Successfully connected to localhost on port 6789
 
 28. Change directory, argument error
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user1
 !user1 logged in
 > cdir folder1 folder2
@@ -396,7 +398,7 @@ Usage: CDIR new-directory
 
 29. Delete file
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user1
 !user1 logged in
 > kill delete.txt
@@ -406,7 +408,7 @@ Successfully connected to localhost on port 6789
 
 30. Delete non-existent file
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user1
 !user1 logged in
 > kill fake.txt
@@ -416,7 +418,7 @@ Successfully connected to localhost on port 6789
 
 31. Delete, argument error
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user1
 !user1 logged in
 > kill fake.txt fake.txt
@@ -427,7 +429,7 @@ Usage: KILL file-spec
 
 32. Rename
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user1
 !user1 logged in
 > name rename.txt
@@ -441,7 +443,7 @@ Successfully connected to localhost on port 6789
 
 33. Rename non-existent file
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user1
 !user1 logged in
 > name fake.txt
@@ -451,7 +453,7 @@ Successfully connected to localhost on port 6789
 
 34. Rename, file already exists
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user1
 !user1 logged in
 > name file.txt
@@ -463,7 +465,7 @@ Successfully connected to localhost on port 6789
 
 35. Rename, argument error
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user1
 !user1 logged in
 > name fake.txt fake.txt
@@ -479,13 +481,13 @@ Usage: TOBE new-file-spec
 
 36. Done
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > done
 +Closing connection
 
 37. Done, argument error
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > done done
 ERROR: Invalid Arguments
 Usage: DONE
@@ -494,7 +496,7 @@ Usage: DONE
 
 38. Retrieve
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user1
 !user1 logged in
 > retr temp/data.csv
@@ -506,7 +508,7 @@ Successfully connected to localhost on port 6789
 
 39. Retrieve, stop sending
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user1
 !user1 logged in
 > retr temp/data.csv
@@ -518,7 +520,7 @@ Successfully connected to localhost on port 6789
 
 40. Retrieve non-existent file
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user1
 !user1 logged in
 > retr fake.txt
@@ -528,7 +530,7 @@ Successfully connected to localhost on port 6789
 
 41. Retrieve directory instead of file
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user1
 !user1 logged in
 > retr temp
@@ -538,7 +540,7 @@ Successfully connected to localhost on port 6789
 
 42. Retrieve, argument error
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user1
 !user1 logged in
 > retr file.txt file.txt
@@ -557,7 +559,7 @@ Usage: STOP
 
 43. Store new, file does not exist
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user1
 !user1 logged in
 > stor new file.txt
@@ -571,7 +573,7 @@ Successfully connected to localhost on port 6789
 
 44. Store new, file exists
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user1
 !user1 logged in
 > stor new file.txt
@@ -585,7 +587,7 @@ Successfully connected to localhost on port 6789
 
 45. Store old, file does not exist
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user1
 !user1 logged in
 > stor old file.txt
@@ -599,7 +601,7 @@ Successfully connected to localhost on port 6789
 
 46. Store old, file exists
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user1
 !user1 logged in
 > stor old file.txt
@@ -613,7 +615,7 @@ Successfully connected to localhost on port 6789
 
 47. Store append, file does not exist
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user1
 !user1 logged in
 > stor app file.txt
@@ -627,7 +629,7 @@ Successfully connected to localhost on port 6789
 
 48. Store append, file exists
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user1
 !user1 logged in
 > stor app file.txt
@@ -641,7 +643,7 @@ Successfully connected to localhost on port 6789
 
 49. Store directory instead of file
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user1
 !user1 logged in
 > stor new client
@@ -651,7 +653,7 @@ Successfully connected to localhost on port 6789
 
 50. Store, argument error
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > user user1
 !user1 logged in
 > stor app file.txt file.txt
@@ -670,7 +672,7 @@ Usage: SIZE number-of-bytes-in-file
 
 51. Access denied
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > type a
 -Please log in first
 > list f
@@ -682,7 +684,7 @@ Successfully connected to localhost on port 6789
 
 52. Unknown command
 Successfully connected to localhost on port 6789
-+RFC 913 SFTP Server
++RFC 913 SFTP Server Online
 > unknown
 ERROR: Invalid Command
 Available Commands: "USER", "ACCT", "PASS", "TYPE", "LIST", "CDIR", "KILL", "NAME", "TOBE", "DONE", "RETR", "SEND", "STOP", "STOR", "SIZE"

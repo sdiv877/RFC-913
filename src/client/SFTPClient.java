@@ -86,6 +86,10 @@ public class SFTPClient {
             // Get and print server welcome message
             String welcomeMessage = readFromServer();
             logMessage(welcomeMessage);
+            // If welcome message indicates service unavailable, close connection
+            if (responseIsError(welcomeMessage)) {
+                closeConnection();
+            }
         } catch (Exception e) {
             logMessage("Could not connect to " + HOSTNAME + ":" + PORT);
             e.printStackTrace();
@@ -164,6 +168,10 @@ public class SFTPClient {
             logMessage("Could not write to server " + HOSTNAME + ":" + PORT);
             throw e;
         }
+    }
+
+    private boolean responseIsError(String res) {
+        return res.startsWith("-");
     }
 
     private void logMessage(String msg) {

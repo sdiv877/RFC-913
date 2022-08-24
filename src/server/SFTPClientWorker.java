@@ -20,10 +20,10 @@ public class SFTPClientWorker implements Runnable {
     private static final List<String> ZERO_ARG_CMDS = Arrays.asList("done", "send", "stop");
     private static final List<String> ONE_OR_TWO_ARG_CMDS = Arrays.asList("list");
     private static final List<String> TWO_ARG_CMDS = Arrays.asList("stor");
-    private static final List<String> ALL_CMDS = Arrays.asList("user", "acct", "pass", "type", "list",
-            "cdir", "kill", "name", "tobe", "done", "retr", "send", "stop", "stor", "size");
     private static final List<String> RESTRICTED_CMDS = Arrays.asList("type", "list", "kill", "name",
             "tobe", "retr", "send", "stop", "stor", "size");
+    private static final List<String> ALL_CMDS = Arrays.asList("user", "acct", "pass", "type", "list",
+            "cdir", "kill", "name", "tobe", "done", "retr", "send", "stop", "stor", "size");
 
     private int id;
     private Socket clientSocket;
@@ -39,15 +39,21 @@ public class SFTPClientWorker implements Runnable {
     private String pendingFileToRetrieve;
     private PendingStorFile pendingStorFile;
 
-    public SFTPClientWorker(Socket clientSocket, int id) {
+    public SFTPClientWorker(Socket clientSocket, int id, boolean serverAvailable) {
         this.id = id;
         this.clientSocket = clientSocket;
         this.transferType = "b";
         try {
             inFromClient = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             outToClient = new DataOutputStream(clientSocket.getOutputStream());
-            String welcomeMsg = makeResponse(SFTPServer.getServerProtocol() + " Server", ResponseCode.Success);
-            writeToClient(welcomeMsg);
+            if (serverAvailable) {
+                // if server is available, send positive welcome message
+                writeToClient(makeResponse(SFTPServer.getServerProtocol() + " Server Online", ResponseCode.Success));
+            } else {
+                // if the server is unavailable, send error message and close connection
+                writeToClient(makeResponse(SFTPServer.getServerProtocol() + " Server Unavailable", ResponseCode.Error));
+                closeConnection();
+            }
         } catch (Exception e) {
             Utils.logMessage("Could not open streams from client " + id);
             e.printStackTrace();
@@ -436,7 +442,7 @@ public class SFTPClientWorker implements Runnable {
     }
 
     private String kill(String fileName) {
-        String selectedFile = currentDir + fileName;
+        String selectedFile = Utils.appendIfMissing(currentDir, "/") + fileName;
         if (!FileSystem.pathExists(selectedFile)) {
             return makeResponse("Not deleted because " + selectedFile + " does not exist", ResponseCode.Error);
         }
@@ -445,7 +451,7 @@ public class SFTPClientWorker implements Runnable {
     }
 
     private String name(String fileName) {
-        String selectedFile = currentDir + fileName;
+        String selectedFile = Utils.appendIfMissing(currentDir, "/") + fileName;
         if (!FileSystem.pathExists(selectedFile)) {
             return makeResponse("Can't find " + selectedFile, ResponseCode.Error);
         }
@@ -454,12 +460,18 @@ public class SFTPClientWorker implements Runnable {
     }
 
     private String tobe(String fileName) {
-        String renamedFile = currentDir + fileName;
+        if (pendingFileToRename == null) {
+            return makeResponse("Please select a file to rename first", ResponseCode.Error);
+        }
+        String renamedFile = Utils.appendIfMissing(currentDir, "/") + fileName;
         if (FileSystem.pathExists(renamedFile)) {
+            pendingFileToRename = null;
             return makeResponse("File wasn't renamed because " + renamedFile + " already exists", ResponseCode.Error);
         }
         FileSystem.renameFile(pendingFileToRename, renamedFile);
-        return makeResponse(pendingFileToRename + " renamed to " + renamedFile, ResponseCode.Success);
+        String tempPendingFileToRename = pendingFileToRename;
+        pendingFileToRename = null;
+        return makeResponse(tempPendingFileToRename + " renamed to " + renamedFile, ResponseCode.Success);
     }
 
     private String done() {
