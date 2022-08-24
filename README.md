@@ -639,10 +639,7 @@ Successfully connected to localhost on port 6789
 > done
 +Closing connection
 
-49. Store non-existent file
-[NOT IMPLEMENTED AS THIS CONTRADICTS TESTS 43, 45 and 47]
-
-50. Store directory instead of file
+49. Store directory instead of file
 Successfully connected to localhost on port 6789
 +RFC 913 SFTP Server
 > user user1
@@ -652,7 +649,7 @@ Successfully connected to localhost on port 6789
 > done
 +Closing connection
 
-51. Store, argument error
+50. Store, argument error
 Successfully connected to localhost on port 6789
 +RFC 913 SFTP Server
 > user user1
@@ -671,7 +668,7 @@ Usage: SIZE number-of-bytes-in-file
 > done
 +Closing connection
 
-52. Access denied
+51. Access denied
 Successfully connected to localhost on port 6789
 +RFC 913 SFTP Server
 > type a
@@ -683,7 +680,7 @@ Successfully connected to localhost on port 6789
 > done
 +Closing connection
 
-53. Unknown command
+52. Unknown command
 Successfully connected to localhost on port 6789
 +RFC 913 SFTP Server
 > unknown
@@ -693,5 +690,5 @@ Available Commands: "USER", "ACCT", "PASS", "TYPE", "LIST", "CDIR", "KILL", "NAM
 +Closing connection
 
 | CLIENT TESTS COMPLETED |
-| PASSED: 53/53 tests.   |
+| PASSED: 52/52 tests.   |
 ~~~

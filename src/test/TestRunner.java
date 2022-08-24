@@ -70,7 +70,6 @@ final class TestRunner {
         testResults.add(test_Store_old_file_exists());
         testResults.add(test_Store_append_file_does_not_exist());
         testResults.add(test_Store_append_file_exists());
-        testResults.add(test_Store_non_existent_file());
         testResults.add(test_Store_directory_instead_of_file());
         testResults.add(test_Store_argument_error());
         testResults.add(test_Access_denied());
@@ -1123,8 +1122,8 @@ final class TestRunner {
             evalClientCommand(sftpClient, "retr temp/data.csv");
             r4 = assertContains("bytes will be sent", sftpClient.getLogHistory().get(3));
             evalClientCommand(sftpClient, "send");
-            // the actual data in temp/data.csv is a string that says "+File sent"
-            r5 = assertEquals("+File sent", sftpClient.getLogHistory().get(4));
+            // the actual data in temp/data.csv is a string that says "This text is from user1/temp/data.csv"
+            r5 = assertEquals("This text is from user1/temp/data.csv", sftpClient.getLogHistory().get(4));
             evalClientCommand(sftpClient, "done");
             r6 = assertEquals("+Closing connection", sftpClient.getLogHistory().get(5));
             testOutcome = (r1 && r2 && r3 && r4 && r5 && r6) ? TestOutcome.Success : TestOutcome.Failure;
@@ -1422,14 +1421,8 @@ final class TestRunner {
         return testOutcome;
     }
 
-    private static TestOutcome test_Store_non_existent_file() {
-        System.out.println("49. Store non-existent file");
-        System.out.println("[NOT IMPLEMENTED AS THIS CONTRADICTS TESTS 43, 45 and 47]\n");
-        return TestOutcome.Success;
-    }
-
     private static TestOutcome test_Store_directory_instead_of_file() {
-        System.out.println("50. Store directory instead of file");
+        System.out.println("49. Store directory instead of file");
         SFTPClient sftpClient = new SFTPClient();
         boolean r1, r2, r3, r4, r5;
         TestOutcome testOutcome;
@@ -1454,7 +1447,7 @@ final class TestRunner {
     }
 
     private static TestOutcome test_Store_argument_error() {
-        System.out.println("51. Store, argument error");
+        System.out.println("50. Store, argument error");
         SFTPClient sftpClient = new SFTPClient();
         boolean r1, r2, r3, r4, r5, r6, r7, r8;
         TestOutcome testOutcome;
@@ -1488,7 +1481,7 @@ final class TestRunner {
     }
 
     private static TestOutcome test_Access_denied() {
-        System.out.println("52. Access denied");
+        System.out.println("51. Access denied");
         SFTPClient sftpClient = new SFTPClient();
         boolean r1, r2, r3, r4, r5, r6;
         TestOutcome testOutcome;
@@ -1515,7 +1508,7 @@ final class TestRunner {
     }
 
     private static TestOutcome test_Unknown_command() {
-        System.out.println("53. Unknown command");
+        System.out.println("52. Unknown command");
         SFTPClient sftpClient = new SFTPClient();
         boolean r1, r2, r3, r4;
         TestOutcome testOutcome;
