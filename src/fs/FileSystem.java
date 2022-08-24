@@ -1,12 +1,15 @@
-package server;
+package fs;
 
 import java.util.List;
 import java.util.ArrayList;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.io.File;
 import java.nio.file.Files;
+import java.util.Base64;
+import java.nio.file.StandardOpenOption;
+
+import server.PendingStorFile;
 
 import utils.Utils;
 
@@ -124,7 +127,14 @@ public final class FileSystem {
     public static String readFile(String relativeFilePath) {
         try {
             Path filePath = Paths.get(HOME_DIR + relativeFilePath);
-            return Files.readString(filePath);
+            FileType fileType = getFileType(relativeFilePath);
+            // if file type is plain text read and return pure string
+            if (fileType == FileType.Text) {
+                return Files.readString(filePath);
+            } else { // otherwise encode to Base64 before returning
+                byte[] fileBytes = Files.readAllBytes(filePath);
+                return Base64.getEncoder().encodeToString(fileBytes);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return "";
@@ -142,9 +152,43 @@ public final class FileSystem {
         return filePath.toFile().delete();
     }
 
+    /**
+     * @return The number of bytes that will be sent to the client, if transfer
+     *         occurs for the file at relativeFilePath.
+     */
+    public static long getFileTransferSize(String relativeFilePath) {
+        File file = Paths.get(HOME_DIR + relativeFilePath).toFile();
+        FileType fileType = getFileType(relativeFilePath);
+        // if file type is binary, send Base64 byte length back
+        if (fileType == FileType.Binary) {
+            return byteLengthToBase64Length(file.length());
+        }
+        // otherwise send normal byte size on disk
+        return file.length();
+    }
+
+    /**
+     * @return The number of bytes that the file at relativeFilePath occupies.
+     */
     public static long getFileSize(String relativeFilePath) {
         File file = Paths.get(HOME_DIR + relativeFilePath).toFile();
         return file.length();
+    }
+
+    /**
+     * @return Returns whether a file is binary or plain text depending on its file extension".
+     */
+    public static FileType getFileType(String relativeFilePath) {
+        List<String> splitUpPath = Utils.splitString(relativeFilePath, "\\.");
+        String fileExtension = splitUpPath.get(splitUpPath.size() - 1);
+        if (fileExtension.equals("txt") || fileExtension.equals("csv")) {
+            return FileType.Text;
+        }
+        return FileType.Binary;
+    }
+
+    private static long byteLengthToBase64Length(long byteLength) {
+        return ((4 * byteLength / 3) + 3) & ~3;
     }
 
     /**

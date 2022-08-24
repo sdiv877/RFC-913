@@ -3,6 +3,10 @@ package server;
 import java.io.*;
 import java.net.*;
 import java.util.List;
+
+import fs.FileSystem;
+import fs.User;
+
 import java.util.Arrays;
 import java.util.ArrayList;
 
@@ -463,17 +467,20 @@ public class SFTPClientWorker implements Runnable {
     }
 
     private String retr(String fileName) {
-        String selectedFile = currentDir + fileName;
+        String selectedFile = Utils.appendIfMissing(currentDir, "/") + fileName;
         if (!FileSystem.pathExists(selectedFile)) {
             return makeResponse("File doesn't exist", ResponseCode.Error);
         } else if (FileSystem.pathIsDirectory(selectedFile)) {
             return makeResponse("Specifier is not a file", ResponseCode.Error);
         }
         pendingFileToRetrieve = selectedFile;
-        return makeResponse(FileSystem.getFileSize(selectedFile) + " bytes will be sent", ResponseCode.Success);
+        return makeResponse(FileSystem.getFileTransferSize(selectedFile) + " bytes will be sent", ResponseCode.Success);
     }
 
     private String send() {
+        if (pendingFileToRetrieve == null) {
+            return makeResponse("Please select a file to retrieve first", ResponseCode.Error);
+        }
         String dataToSend = FileSystem.readFile(pendingFileToRetrieve);
         pendingFileToRetrieve = null;
         return makeResponse(dataToSend, ResponseCode.None);

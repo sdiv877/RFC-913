@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.ArrayList;
 
 import client.SFTPClient;
-import server.FileSystem;
+import fs.FileSystem;
 import utils.Utils;
 
 final class TestRunner {
