@@ -10,7 +10,6 @@ import java.util.Base64;
 import java.nio.file.StandardOpenOption;
 
 import server.PendingStorFile;
-
 import utils.Utils;
 
 public final class FileSystem {
@@ -54,6 +53,19 @@ public final class FileSystem {
 
     public static boolean pathIsFile(String relativePath) {
         return !pathIsDirectory(relativePath);
+    }
+
+    /**
+     * @return true if path is an empty directory, or a file; otherwise false.
+     */
+    public static boolean pathIsEmpty(String relativePath) {
+        Path filePath = Paths.get(HOME_DIR + relativePath);
+        File dir = filePath.toFile();
+        if (dir.isDirectory()) {
+            String[] dirFiles = dir.list();
+            return (dirFiles == null) || (dir.length() == 0);
+        }
+        return true; // path is file
     }
 
     public static String readDir(String relativePath) {
@@ -147,7 +159,7 @@ public final class FileSystem {
         originalFile.renameTo(newFilePath.toFile());
     }
 
-    public static boolean deleteFile(String relativeFilePath) {
+    public static boolean deletePath(String relativeFilePath) {
         Path filePath = Paths.get(HOME_DIR + relativeFilePath);
         return filePath.toFile().delete();
     }

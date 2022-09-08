@@ -3,13 +3,11 @@ package server;
 import java.io.*;
 import java.net.*;
 import java.util.List;
-
-import fs.FileSystem;
-import fs.User;
-
 import java.util.Arrays;
 import java.util.ArrayList;
 
+import fs.FileSystem;
+import fs.User;
 import utils.Utils;
 
 /**
@@ -441,13 +439,15 @@ public class SFTPClientWorker implements Runnable {
         return makeResponse("Changed working dir to " + currentDir, ResponseCode.LoggedIn);
     }
 
-    private String kill(String fileName) {
-        String selectedFile = Utils.appendIfMissing(currentDir, "/") + fileName;
-        if (!FileSystem.pathExists(selectedFile)) {
-            return makeResponse("Not deleted because " + selectedFile + " does not exist", ResponseCode.Error);
+    private String kill(String pathName) {
+        String selectedPath = Utils.appendIfMissing(currentDir, "/") + pathName;
+        if (!FileSystem.pathExists(selectedPath)) {
+            return makeResponse("Not deleted because " + selectedPath + " does not exist", ResponseCode.Error);
+        } else if (FileSystem.pathIsDirectory(selectedPath)) {
+            return makeResponse("Not deleted because " + selectedPath + " is a directory", ResponseCode.Error);
         }
-        FileSystem.deleteFile(selectedFile);
-        return makeResponse(selectedFile + " deleted", ResponseCode.Success);
+        FileSystem.deletePath(selectedPath);
+        return makeResponse(selectedPath + " deleted", ResponseCode.Success);
     }
 
     private String name(String fileName) {
@@ -481,8 +481,10 @@ public class SFTPClientWorker implements Runnable {
     private String retr(String fileName) {
         String selectedFile = Utils.appendIfMissing(currentDir, "/") + fileName;
         if (!FileSystem.pathExists(selectedFile)) {
+            pendingFileToRetrieve = null;
             return makeResponse("File doesn't exist", ResponseCode.Error);
         } else if (FileSystem.pathIsDirectory(selectedFile)) {
+            pendingFileToRetrieve = null;
             return makeResponse("Specifier is not a file", ResponseCode.Error);
         }
         pendingFileToRetrieve = selectedFile;
@@ -505,6 +507,7 @@ public class SFTPClientWorker implements Runnable {
 
     private String stor(String mode, String fileName) {
         if (!fileName.contains(".")) {
+            pendingStorFile = null;
             return makeResponse("Specifier is not a file", ResponseCode.Error);
         }
         String selectedFile = Utils.appendIfMissing(currentDir, "/") + fileName;
@@ -537,6 +540,9 @@ public class SFTPClientWorker implements Runnable {
 
     private String size(int maxBytes) {
         try {
+            if (pendingStorFile == null) {
+                return makeResponse("Please select a file name to store at first", ResponseCode.Error);
+            }
             writeToClient(makeResponse("Ok, waiting for file", ResponseCode.Success));
             pendingStorFile.setMaxBytes(maxBytes);
             pendingStorFile.setBytesToWrite(inFromClient.readLine());
@@ -544,10 +550,12 @@ public class SFTPClientWorker implements Runnable {
             FileSystem.writeFile(pendingStorFile);
         } catch (Exception e) {
             // e.printStackTrace();
+            pendingStorFile = null;
             return makeResponse("Couldn't save " + e.getLocalizedMessage(), ResponseCode.Error);
         }
-
-        return makeResponse("Saved " + pendingStorFile.getFilePath(), ResponseCode.Success);
+        String savedFile = pendingStorFile.getFilePath();
+        pendingStorFile = null;
+        return makeResponse("Saved " + savedFile, ResponseCode.Success);
     }
 
     private static String makeResponse(String msg, ResponseCode responseCode) {

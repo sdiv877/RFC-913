@@ -95,7 +95,7 @@ final class TestRunner {
 
     private static void clearGeneratedFiles() {
         FileSystem.writeFile("user1/file.txt", "");
-        FileSystem.deleteFile("user1/file5.txt");
+        FileSystem.deletePath("user1/file5.txt");
     }
 
     private static void printTestResults() {
@@ -1245,7 +1245,7 @@ final class TestRunner {
     }
 
     private static TestOutcome test_Store_new_file_does_not_exist() {
-        FileSystem.deleteFile("user1/file.txt");
+        FileSystem.deletePath("user1/file.txt");
         System.out.println("43. Store new, file does not exist");
         SFTPClient sftpClient = new SFTPClient();
         boolean r1, r2, r3, r4, r5, r6, r7;
@@ -1304,7 +1304,7 @@ final class TestRunner {
     }
 
     private static TestOutcome test_Store_old_file_does_not_exist() {
-        FileSystem.deleteFile("user1/file.txt");
+        FileSystem.deletePath("user1/file.txt");
         System.out.println("45. Store old, file does not exist");
         SFTPClient sftpClient = new SFTPClient();
         boolean r1, r2, r3, r4, r5, r6, r7;
@@ -1363,7 +1363,7 @@ final class TestRunner {
     }
 
     private static TestOutcome test_Store_append_file_does_not_exist() {
-        FileSystem.deleteFile("user1/file.txt");
+        FileSystem.deletePath("user1/file.txt");
         System.out.println("47. Store append, file does not exist");
         SFTPClient sftpClient = new SFTPClient();
         boolean r1, r2, r3, r4, r5, r6, r7;
